@@ -1,0 +1,224 @@
+Barraskewda @ Choice Band
+Ability: Swift Swim
+EVs: 252 Atk / 4 Def / 252 Spe
+Adamant Nature
+- Liquidation
+- Close Combat
+- Flip Turn
+- Aqua Jet
+#
+Bisharp @ Life Orb
+Ability: Defiant
+EVs: 252 Atk / 4 SpD / 252 Spe
+Jolly Nature
+- Assurance
+- Knock Off
+- Sucker Punch
+- Iron Head
+#
+Blacephalon @ Choice Specs
+Ability: Beast Boost
+EVs: 252 SpA / 4 SpD / 252 Spe
+Timid Nature
+- Shadow Ball
+- Flamethrower
+- Fire Blast
+- Psychic
+#
+Buzzwole @ Rocky Helmet
+Ability: Beast Boost
+EVs: 152 HP / 168 Atk / 188 Spe
+Adamant Nature
+- Close Combat
+- Ice Punch
+- Earthquake
+- Leech Life
+#
+Clefable @ Life Orb
+Ability: Magic Guard
+EVs: 252 HP / 196 Def / 60 Spe
+Bold Nature
+- Ice Beam
+- Moonblast
+- Flamethrower
+- Thunderbolt
+#
+Dragapult @ Choice Specs
+Ability: Infiltrator
+EVs: 252 SpA / 4 SpD / 252 Spe
+Timid Nature
+- Shadow Ball
+- Draco Meteor
+- Uturn
+- Flamethrower
+#
+Dragonite @ Choice Band
+Ability: Multiscale
+EVs: 252 Atk / 4 SpD / 252 Spe
+Jolly Nature
+- Dragon Claw
+- Earthquake
+- Fire Punch
+- Ice Punch
+#
+Garchomp @ Leftovers
+Ability: Rough Skin
+EVs: 252 Atk / 4 SpD / 252 Spe
+Jolly Nature
+- Fire Blast
+- Earthquake
+- Fire Fang
+- Dragon Claw
+#
+Heatran @ Leftovers
+Ability: Flash Fire
+EVs: 252 HP / 232 SpD / 24 Spe
+Calm Nature
+- Lava Plume
+- Earth Power
+- Flash Cannon
+- Fire Blast
+#
+Kartana @ Choice Band
+Ability: Beast Boost
+EVs: 252 Atk / 4 SpD / 252 Spe
+Jolly Nature
+- Leaf Blade
+- Smart Strike
+- Knock Off
+- Sacred Sword
+#
+Landorus-Therian @ Leftovers
+Ability: Intimidate
+EVs: 252 Atk / 4 Def / 252 Spe
+Jolly Nature
+- Knock Off
+- Earthquake
+- Stone Edge
+- Uturn
+#
+Magnezone @ Choice Specs
+Ability: Magnet Pull
+EVs: 4 Def / 252 SpA / 252 Spe
+Modest Nature
+- Thunderbolt
+- Flash Cannon
+- Volt Switch
+- Body Press
+#
+Melmetal @ Choice Band
+Ability: Iron Fist
+EVs: 32 HP / 252 Atk / 224 Spe
+Adamant Nature
+- Double Iron Bash
+- Earthquake
+- Close Combat
+- Thunder Punch
+#
+Rillaboom @ Choice Band
+Ability: Grassy Surge
+EVs: 252 Atk / 4 Def / 252 Spe
+Adamant Nature
+- Grassy Glide
+- Knock Off
+- Wood Hammer
+- Uturn
+#
+Slowking-Galar @ Assault Vest
+Ability: Regenerator
+EVs: 252 HP / 12 Def / 124 SpA / 120 SpD
+Calm Nature
+- Psychic
+- Sludge Bomb
+- Flamethrower
+- Scald
+#
+Tapu Fini @ Choice Scarf
+Ability: Misty Surge
+EVs: 248 HP / 44 SpD / 216 Spe
+Timid Nature
+- Scald
+- Moonblast
+- Ice Beam
+- Shadow Ball
+#
+Tapu Koko @ Heavy-Duty Boots
+Ability: Electric Surge
+EVs: 252 SpA / 4 SpD / 252 Spe
+Timid Nature
+- Thunderbolt
+- Dazzling Gleam
+- Uturn
+- Grass Knot
+#
+Tapu Lele @ Choice Specs
+Ability: Psychic Surge
+EVs: 252 SpA / 4 SpD / 252 Spe
+Modest Nature
+- Psyshock
+- Moonblast
+- Focus Blast
+- Psychic
+#
+Tornadus-Therian @ Heavy-Duty Boots
+Ability: Regenerator
+EVs: 4 HP / 252 SpA / 252 Spe
+Timid Nature
+- Heat Wave
+- Hurricane
+- Focus Blast
+- Knock Off
+#
+Urshifu-Rapid-Strike @ Choice Band
+Ability: Unseen Fist
+EVs: 252 Atk / 4 Def / 252 Spe
+Jolly Nature
+- Surging Strikes
+- Close Combat
+- Aqua Jet
+- Uturn
+#
+Victini @ Heavy-Duty Boots
+Ability: Victory Star
+EVs: 252 Atk / 4 SpA / 252 Spe
+Jolly Nature
+- Vcreate
+- Bolt Strike
+- Glaciate
+- Uturn
+#
+Volcanion @ Heavy-Duty Boots
+Ability: Water Absorb
+EVs: 252 SpA / 4 SpD / 252 Spe
+Timid Nature
+- Steam Eruption
+- Flamethrower
+- Earth Power
+- Sludge Wave
+#
+Weavile @ Choice Band
+Ability: Pressure
+EVs: 252 Atk / 4 SpD / 252 Spe
+Adamant Nature
+- Knock Off
+- Icicle Crash
+- Ice Shard
+- Low Kick
+#
+Zapdos @ Heavy-Duty Boots
+Ability: Static
+EVs: 4 Def / 252 SpA / 252 Spe
+Timid Nature
+- Thunderbolt
+- Hurricane
+- Weather Ball
+- Heat Wave
+#
+Zeraora @ Heavy-Duty Boots
+Ability: Volt Absorb
+EVs: 252 Atk / 4 Def / 252 Spe
+Jolly Nature
+- Plasma Fists
+- Knock Off
+- Close Combat
+- Volt Switch
