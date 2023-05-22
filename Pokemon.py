@@ -48,7 +48,7 @@ class Pokemon:
         self.evs = evs
         self.ivs = ivs
         self.nature = nature
-        self.stats = [0, 0, 0, 0, 0, 0]
+        self.stats = [0, 0, 0, 0, 0, 0] #hp, atk, def, spa, spd, spe
         self.stats[0] = HpCalc(pokedex[name]["baseStats"]["hp"], ivs[0], evs[0])
         self.highestStat = ""
         maxStat = -1
@@ -68,11 +68,62 @@ class Pokemon:
         self.item = item
         self.maxHP = self.stats[0]
         self.statStages = [0, 0, 0, 0, 0]
+        self.status = None
+        self.volatileStatus = []
+        
+        self.trapped = False
+        self.ignoreSecondary = False
+        self.ignoreScreens = False
+        self.ignoreAbilities = False
 
     def __str__(self):
         return "%s @ %s\nAbility: %s\n%s Nature" % (self.name, self.item, self.ability, self.nature)
-
-
+    
+    def removeItem(self):
+        if self.item == None:
+            return False
+        else:
+            self.item = None
+            return True
+    
+    
+    # def applyEffect(effect):
+    #     return
+    
+    #this function should parse various effects(recoil, stat modifications, healing)
+    def applyBoost(self, boost):
+        if 'atk' in boost:
+            self.statStages[0] += boost['atk']
+        if 'def' in boost:
+            self.statStages[1] += boost['def']
+        if 'spa' in boost:
+            self.statStages[2] += boost['spa']
+        if 'spd' in boost:
+            self.statStages[3] += boost['spd']
+        if 'spe' in boost:
+            self.statStages[4] += boost['spe']
+        
+    def applyHeal(self, heal):
+        self.stats[0] += math.floor(self.maxHP / heal[1])
+        if self.stats[0] > self.maxHP:
+            self.stats[0] = self.maxHP
+    
+    #misty terrain check should be in the move logic
+    def applyStatus(self, status):
+        if status['status'] is not None:
+            if self.status is not None:
+                if (status == 'psn' or status == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
+                    status = None
+                if (status == 'brn') and ('Fire' in self.types):
+                    status = None
+                if (status == 'par') and ('Electric' in self.types):
+                    status = None
+                if (status == 'frz') and ('Ice' in self.types):
+                    status = None
+                self.status = status['status']
+        if status['volatileStatus'] is not None:
+            self.volatileStatus.append(status['volatileStatus'])
+    
 def LoadSet(monSet):
     line1 = monSet[0].split('@')
     name = line1[0].lower().strip()
