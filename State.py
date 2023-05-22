@@ -27,7 +27,7 @@ class State:
         self.player1.defog()
         self.player2.defog()
         self.terrain = None
-        self.terrain = 0
+        self.terrainCount = 0
 
     def haze(self):
         self.player1.currentMon.statStages = [0, 0, 0, 0, 0]
