@@ -8,8 +8,9 @@ class Player:
         self.id = id
         self.team = team
         self.currentMon = self.team[0]
-        self.hazards = [] #hazards and screens here
+        self.hazards = []
         self.screens = []
+        self.screensCountdowns = []  #screencountdowns should be popped when hitting 0
       
     # incoming is the Pokemon object, may need to change ot index
     def switch(self, incomingIdx):
@@ -24,8 +25,30 @@ class Player:
             # this is reached if a Pokemon is KOed to hazards, only return false to not apply switchin effects
             return False
         return True
-        
-        
+    
+    def applySideEffect(self, sideEffect):
+        if sideEffect == 'reflect' and 'reflect' not in self.hazards:
+            self.screens.append('reflect')
+            self.screensCountdown.append(8 if self.currentMon.item == 'Light Clay' else 5)
+            return True
+        if sideEffect == 'lightscreen' and 'lightscreen' not in self.hazards:
+            self.screens.append('lightscreen')
+            self.screensCountdown.append(8 if self.currentMon.item == 'Light Clay' else 5)
+            return True
+        if sideEffect == 'auroraveil' and 'auroraveil' not in self.hazards:
+            self.screens.append('auroraveil')
+            self.screensCountdown.append(8 if self.currentMon.item == 'Light Clay' else 5)
+            return True
+        if sideEffect == 'stealthrock' and 'stealthrock' not in self.hazards:
+            self.hazards.append('stealthrock')
+            return True
+        if sideEffect == 'spikes' and self.hazards.count('spikes') <= 3:
+            self.hazards.append('spikes')
+            return True
+        if sideEffect == 'toxicspikes' and self.hazards.count('toxicspikes') <= 2:
+            self.hazards.append('spikes')
+            return True
+            
     def applyHazardsDmg(self, incoming):
         #apply hazards
         if 'stealthrock' in self.hazards:

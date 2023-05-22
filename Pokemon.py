@@ -122,7 +122,8 @@ class Pokemon:
                     status = None
                 self.status = status['status']
         if status['volatileStatus'] is not None:
-            self.volatileStatus.append(status['volatileStatus'])
+            if status['volatileStatus'] not in self.volatileStatus:
+                self.volatileStatus.append(status['volatileStatus'])
     
 def LoadSet(monSet):
     line1 = monSet[0].split('@')
