@@ -15,7 +15,7 @@ class Player:
       
     # incoming is the Pokemon object, may need to change ot index
     def switch(self, incomingIdx):
-        if self.currentMon.stats[0] <= 0:
+        if self.team[incomingIdx].stats[0] <= 0:
             print("shouldnt try to switch to KOed Pokemon")
             return False
         incoming = self.team[incomingIdx]
