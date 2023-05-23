@@ -19,7 +19,7 @@ class Player:
             print("shouldnt try to switch to KOed Pokemon")
             return False
         incoming = self.team[incomingIdx]
-        self.currentMon.volatileStatus = []
+        self.currentMon.clearVolatileStatus = 'all'
         self.applyHazards(self, incoming)
         self.currentMon = incoming
         if self.currentMon.stats[0] <= 0:
@@ -72,3 +72,4 @@ class Player:
     def defog(self):
         self.hazards = []
         self.screens = []
+        self.screensCountdowns = []

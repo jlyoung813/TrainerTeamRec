@@ -50,6 +50,8 @@ class State:
     def switch(self, playerIdx, incomingIdx):
         if self.players[playerIdx].switch(incomingIdx):
             abilitydex[self.players[playerIdx].currentMon.ability]['onEntry'](self, self.players[playerIdx], self.players[1-playerIdx])
+        else:
+            self.players[playerIdx].currentMon = None
     
     def end_of_turn(self):
     #lefties, weather, status, seeds
