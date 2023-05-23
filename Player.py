@@ -19,8 +19,9 @@ class Player:
             print("shouldnt try to switch to KOed Pokemon")
             return False
         incoming = self.team[incomingIdx]
-        self.currentMon.clearVolatileStatus = 'all'
-        self.applyHazards(self, incoming)
+        if self.currentMon is not None:
+            self.currentMon.clearVolatileStatus = 'all'
+            self.applyHazards(self, incoming)
         self.currentMon = incoming
         if self.currentMon.stats[0] <= 0:
             # this is reached if a Pokemon is KOed to hazards, only return false so switchin effects arent applied
