@@ -25,17 +25,17 @@ def loadDicts():
     #overrideType should override the type
     #override damage should override the entire damage formula and have the damage be fixed to the returned value
     
-    WEIGHT_MOVE_THRESHOLDS = [(120, 200.0), (100, 100.0), (80, 50.0), (60, 25.0), (40, 10.0), (0.1, 20)] #lowkick and grassknot moment
+    WEIGHT_MOVE_THRESHOLDS = [(120, 200.0), (100, 100.0), (80, 50.0), (60, 25.0), (40, 10.0), (20, 0.1)] #lowkick and grassknot moment
 
-    movedex['grassknot']['basePowerModifier'] = lambda state, user, opponent : WEIGHT_MOVE_THRESHOLDS[([opponent.weightkgs >= i[1] for i in WEIGHT_MOVE_THRESHOLDS]).index(True)]
-    movedex['lowkick']['basePowerModifier'] = lambda state, user, opponent : WEIGHT_MOVE_THRESHOLDS[([opponent.weightkgs >= i[1] for i in WEIGHT_MOVE_THRESHOLDS]).index(True)]
-    movedex['eruption']['basePowerModifier'] = lambda state, user, opponent : user.stats[0] // user.maxHp
-    movedex['waterspout']['basePowerModifier'] = lambda state, user, opponent : user.stats[0] // user.maxHp
-    movedex['gyroball']['basePowerModifier'] = lambda state, user, opponent : user.stats[5] // opponent.stats[5]
-    movedex['knockoff']['basePowerModifier'] = lambda state, user, opponent : 1.5 if opponent.removeItem() == True else 1 #removeItem is a function to remove item. should fail if target lacks item or is holding unremovable item
+    movedex['grassknot']['basePowerModifier'] = lambda state, user, opponent : WEIGHT_MOVE_THRESHOLDS[([opponent.weightkgs >= i[1] for i in WEIGHT_MOVE_THRESHOLDS]).index(True)][0]
+    movedex['lowkick']['basePowerModifier'] = lambda state, user, opponent : WEIGHT_MOVE_THRESHOLDS[([opponent.weightkgs >= i[1] for i in WEIGHT_MOVE_THRESHOLDS]).index(True)][0]
+    movedex['eruption']['basePowerModifier'] = lambda state, user, opponent : user.stats[0] * 150 // user.maxHp
+    movedex['waterspout']['basePowerModifier'] = lambda state, user, opponent : user.stats[0] * 150 // user.maxHp
+    movedex['gyroball']['basePowerModifier'] = lambda state, user, opponent : min(25 * opponent.stats[5] // user.stats[5] + 1, 150)
+    movedex['knockoff']['basePowerModifier'] = lambda state, user, opponent : 97.5 if opponent.removeItem() else 60 #removeItem is a function to remove item. should fail if target lacks item or is holding unremovable item
     movedex['poltergeist']['conditional'] = lambda state, user, opponent : True if opponent.item != None else False
-    movedex['hex']['basePowerModifier'] = lambda state, user, opponent : 2 if opponent.status != None else 1
-    movedex['weatherball']['basePowerModifier'] = lambda state, user, opponent : 2 if state.weather != None else 1
+    movedex['hex']['basePowerModifier'] = lambda state, user, opponent : 130 if opponent.status != None else 65
+    movedex['weatherball']['basePowerModifier'] = lambda state, user, opponent : 100 if state.weather != None else 50
     movedex['auroraveil']['conditional'] = lambda state, user, opponent : True if state.weather == 'hail' or state.weather == 'snow' else False
     
     
@@ -67,11 +67,11 @@ def loadDicts():
     
     #==============================================================abilities============================================================================
     #basePowerModifiers are applied to the base damage
-    abilitydex['ironfist']['basePowerModifier'] = lambda move, state, user, opponent : 1.2 if move['flags']['punch'] == 1 else 1 
-    abilitydex['sheerforce']['basePowerModifier'] = lambda move, state, user, opponent : 1.3 if move['secondary'] is not None else 1
-    abilitydex['strongjaw']['basePowerModifier'] = lambda move, state, user, opponent : 1.5 if move['flags']['bite'] == 1 is not None else 1
+    abilitydex['ironfist']['basePowerModifier'] = lambda move, state, user, opponent: 1.2 if 'punch' in move['flags'].keys() else 1
+    abilitydex['sheerforce']['basePowerModifier'] = lambda move, state, user, opponent : 1.3 if 'secondary' in move.keys() else 1
+    abilitydex['strongjaw']['basePowerModifier'] = lambda move, state, user, opponent : 1.5 if 'bite' in move['flags'].keys() else 1
     abilitydex['sandforce']['basePowerModifier'] = lambda move, state, user, opponent : 1.3 if (move['type'] == 'Ground' or move['type'] == 'Rock' or move['type'] == 'Steel') and state.weather == 'sandstorm' else 1
-    
+    abilitydex['technician']['basePowerModifier'] = lambda move, state, user, opponent : 1.5 if move['basePower'] <= 60 else 1
     #damageModifiers are applied at the  end of the damage formula
     abilitydex['adaptability']['damageModifier'] = 4/3 #adaptability changes 1.5 -> 2, so 4/3 multiplier
     # abilitydex['analytic']['damageModifier'] = lambda move, state, user, opponent : 1.3
@@ -96,8 +96,8 @@ def loadDicts():
     abilitydex['flashfire']['incomingModifier'] = lambda move, user : 0 if move['type'] == 'Fire' else 1
     abilitydex['sapsipper']['incomingModifier'] = lambda move, user : 0 if move['type'] == 'Grass' else 1
     abilitydex['windrider']['incomingModifier'] = lambda move, user : 0 if move['flags']['wind'] == 1 else 1
-    abilitydex['sturdy']['incomingModifier'] = lambda move, user : 0 if move['ohko'] is True else 1 #not sure how ohko moves are calced, may move this
-    abilitydex['multiscale']['incomingModifier'] = lambda move, user : 0.5 if user.stats.hp == user.stats.maxHp else 1
+    abilitydex['sturdy']['incomingModifier'] = lambda move, user : 0 if 'ohko' in move.keys() else 1 #not sure how ohko moves are calced, may move this
+    abilitydex['multiscale']['incomingModifier'] = lambda move, user : 0.5 if user.stats[0] == user.maxHp else 1
     
     abilitydex['eartheater']['onActivate'] = lambda move, user : user.applyHeal([1, 4]) if move['type'] == 'Ground' else None
     abilitydex['voltabsorb']['onActivate'] = lambda move, user : user.applyHeal([1, 4]) if move['type'] == 'Electric' else None

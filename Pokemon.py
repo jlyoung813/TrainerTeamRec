@@ -69,7 +69,6 @@ class Pokemon:
         self.item = item
         self.maxHp = self.stats[0]
         self.statStages = [0, 0, 0, 0, 0]
-        self.removeItem = True
         self.weightkgs = dex[name]["weightkg"]
         self.status = None
         self.volatileStatus = []
@@ -89,7 +88,7 @@ class Pokemon:
         if self.item == None:
             return False
         else:
-            self.item = None
+            #self.item = None
             return True
 
 
@@ -130,6 +129,18 @@ class Pokemon:
         if status['volatileStatus'] is not None:
             if status['volatileStatus'] not in self.volatileStatus:
                 self.volatileStatus.append(status['volatileStatus'])
+
+    def grounded(self):
+        return 'Flying' not in self.types and self.ability != 'levitate' and self.item != 'Air Balloon'
+
+def stage(stage):
+    numerator = 2
+    denominator = 2
+    if stage < 0:
+        denominator -= stage
+    else:
+        numerator += stage
+    return numerator / denominator
 
 def LoadSet(monSet):
     line1 = monSet[0].split('@')
@@ -200,12 +211,12 @@ def LoadSet(monSet):
 
 
 def BuildSets():
-    file = open('sets.txt', 'r')
+    file = open('teams.txt', 'r')
     lines = file.read()
-    lines = lines.split('#')
+    lines = lines.split('\n')
     mons = []
-    for line in lines:
-        line = line.strip().split('\n')
+    for i in range(0, len(lines), 9):
+        line = lines[i:i+8]
         sets = [line[0], line[1], line[2], line[3], line[4:]]
         mon = LoadSet(sets)
         mons.append(mon)

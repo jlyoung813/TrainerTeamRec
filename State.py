@@ -1,7 +1,7 @@
 from load_data import loadDicts
 from Player import Player
 from Pokemon import Pokemon
-pokedex, movedex, abilitydex = loadDicts
+pokedex, movedex, abilitydex = loadDicts()
 
 class State:
     def __init__(self, player1, player2):
