@@ -9,6 +9,7 @@ def StatCalc(base,iv=0,ev=0, nature=1):
     stat = math.floor((math.floor(((2 * base + iv + math.floor(ev / 4)) * 100)/100) + 5) * nature)
     return stat
 
+
 stats = ["hp", "atk", "def", "spa", "spd", "spe"]
 
 
@@ -42,43 +43,46 @@ natures = {"Adamant": ["atk", "spa"],
 class Pokemon:
     def __init__(self, name, ability, moves, evs=[0, 0, 0, 0, 0, 0], ivs=[31, 31, 31, 31, 31, 31], nature="Hardy",
                  item=""):
+        dex = pokedex.pokedex
         self.name = name
-        self.types = pokedex[name]["types"]
+        self.types = dex[name]["types"]
         self.ability = ability
         self.evs = evs
         self.ivs = ivs
         self.nature = nature
         self.stats = [0, 0, 0, 0, 0, 0]
-        self.stats[0] = HpCalc(pokedex[name]["baseStats"]["hp"], ivs[0], evs[0])
+        self.stats[0] = HpCalc(dex[name]["baseStats"]["hp"], ivs[0], evs[0])
         self.highestStat = ""
         maxStat = -1
         for loc, stat in enumerate(stats):
-            if loc >= 1 and stat in pokedex[name]["baseStats"].keys():
+            if loc >= 1 and stat in dex[name]["baseStats"].keys():
                 natureval = 1
                 if nature in natures.keys():
                     if natures[nature][0] == stat:
                         natureval = 1.1
                     if natures[nature][1] == stat:
                         natureval = 0.9
-                self.stats[loc] = StatCalc(pokedex[name]["baseStats"][stat], ivs[loc], evs[loc], natureval)
+                self.stats[loc] = StatCalc(dex[name]["baseStats"][stat], ivs[loc], evs[loc], natureval)
                 if self.stats[loc] > maxStat:
                     maxStat = self.stats[loc]
                     self.highestStat = stat
         self.moves = moves
         self.item = item
-        self.maxHP = self.stats[0]
+        self.maxHp = self.stats[0]
         self.statStages = [0, 0, 0, 0, 0]
+        self.removeItem = True
+        self.weightkgs = dex[name]["weightkg"]
 
     def __str__(self):
-        return "%s @ %s\nAbility: %s\n%s Nature" % (self.name, self.item, self.ability, self.nature)
+        return f"{self.name} @ {self.item}\nAbility: {self.ability}\n{self.nature} Nature"
 
 
 def LoadSet(monSet):
     line1 = monSet[0].split('@')
-    name = line1[0].lower().strip()
-    item = line1[1:]
+    name = line1[0].lower().strip().replace('-', '').replace(' ', '')
+    item = line1[1].strip()
     line2 = monSet[1].split(':')
-    ability = line2[1].strip()
+    ability = line2[1].lower().replace(' ', '')
     line3 = monSet[2].split(':')
     evread = line3[1].strip().split('/')
     evlist =[]
@@ -97,7 +101,7 @@ def LoadSet(monSet):
     line5 = monSet[4]
     moves = []
     for line in line5:
-        moves.append(line.split('-')[1].strip())
+        moves.append(line.replace('-', '').replace(' ', ''))
     mon = Pokemon(name, ability, moves, evs, nature=nature, item=item)
     return mon
 

@@ -1,4 +1,3 @@
-import movelist
 import math
 
 stats = ["hp", "atk", "def", "spa", "spd", "spe"]
@@ -401,56 +400,57 @@ typeChart = {"bug": {
 	}
 }
 
-abilities = {}
+class calc:
+	def __init__(self, movedex, abilitydex):
+		self.movedex = movedex
+		self.abilitydex = abilitydex
 
-
-def DamageCalc(mon1, mon2, move, field, random):
-	moves = movelist.moves
-	if moves[move]["category"] == "Status":
-		return 0
-	if moves[move]["category"] == "Physical":
-		attack = mon1.stats[1]
-		defense = mon2.stats[2]
-		if mon1.item == "Choice Band":
-			attack *= 1.5
-	if moves[move]["category"] == "Special":
-		attack = mon1.stats[3]
-		defense = mon2.stats[4]
-		if mon1.item == "Choice Specs":
-			attack *= 1.5
-		if mon2.item == "Assault Vest":
-			defense *= 1.5
-	if "overrideOffensiveStat" in moves[move].keys():
-		for loc, stat in enumerate(stats):
-			if stat == moves[move]["overrideOffensiveStat"]:
-				attack = mon1.stats[loc]
-	if "overrideDefensiveStat" in moves[move].keys():
-		for loc, stat in enumerate(stats):
-			if stat == moves[move]["overrideDefensiveStat"]:
-				defense = mon2.stats[loc]
-	power = moves[move]["basePower"]
-	if "basePowerModifier" in moves[move].keys():
-		power = moves[move]["basePowerModifier"](field, mon1, mon2)
-	damage = math.floor((((2*100)/5+2) * power * (attack / defense))/50+2)
-	move_type = moves[move]["type"]
-	if move_type == "Ground" and mon2.item == "Air Balloon":
-		return 0
-	if mon1.types.count(move_type) > 0:
-		if mon1.ability == "adaptability":
-			damage = math.floor(damage * 2)
-		else:
-			damage = math.floor(damage * 1.5)
-	for t in mon2.types:
-		val = typeChart[t.lower()]["damageTaken"][move_type]
-		damage = math.floor(damage * val)
-	lorb = 1.3 * (mon1.item == "Life Orb")
-	ability1 = 1
-	ability2 = 1
-	if "damageModifier" in abilities[mon1.ability].keys():
-		ability1 = abilities[mon1.ability]["damageModifier"](moves[move])
-	if "activationCondition" in abilities[mon2.ability].keys():
-		flag = abilities[mon2.ability]["damageModifier"](moves[move])
+	def DamageCalc(self, mon1, mon2, move, field, random):
+		moves = self.movedex
+		abilities = self.abilitydex
+		if moves[move]["category"] == "Status":
+			return 0
+		if moves[move]["category"] == "Physical":
+			attack = mon1.stats[1]
+			defense = mon2.stats[2]
+			if mon1.item == "Choice Band":
+				attack *= 1.5
+		if moves[move]["category"] == "Special":
+			attack = mon1.stats[3]
+			defense = mon2.stats[4]
+			if mon1.item == "Choice Specs":
+				attack *= 1.5
+			if mon2.item == "Assault Vest":
+				defense *= 1.5
+		if "overrideOffensiveStat" in moves[move].keys():
+			for loc, stat in enumerate(stats):
+				if stat == moves[move]["overrideOffensiveStat"]:
+					attack = mon1.stats[loc]
+		if "overrideDefensiveStat" in moves[move].keys():
+			for loc, stat in enumerate(stats):
+				if stat == moves[move]["overrideDefensiveStat"]:
+					defense = mon2.stats[loc]
+		power = moves[move]["basePower"]
+		if "basePowerModifier" in moves[move].keys():
+			power = moves[move]["basePowerModifier"](field, mon1, mon2)
+		damage = math.floor((((2*100)/5+2) * power * (attack / defense))/50+2)
+		move_type = moves[move]["type"]
+		if move_type == "Ground" and mon2.item == "Air Balloon":
+			return 0
+		if mon1.types.count(move_type) > 0:
+			if mon1.ability == "adaptability":
+				damage = math.floor(damage * 2)
+			else:
+				damage = math.floor(damage * 1.5)
+		for t in mon2.types:
+			val = typeChart[t.lower()]["damageTaken"][move_type]
+			damage = math.floor(damage * val)
+		lorb = 1 + 0.3 * (mon1.item == "Life Orb")
+		ability1 = 1
+		ability2 = 1
+		if "basePowerModifier" in abilities[mon1.ability].keys():
+			ability1 = abilities[mon1.ability]["basePowerModifier"](moves[move], field, mon1, mon2)
 		if "incomingModifier" in abilities[mon2.ability].keys():
-			ability2 = abilities[mon2.ability]["incomingModifier"](flag)
-	damage *= lorb * ability1 * ability2
-	return math.floor(damage * random)
+			ability2 = abilities[mon2.ability]["incomingModifier"](moves[move], mon2)
+		damage *= lorb * ability1 * ability2
+		return math.floor(damage * random)

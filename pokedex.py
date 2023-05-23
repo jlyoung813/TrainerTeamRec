@@ -2539,7 +2539,7 @@ pokedex = {
 		"evoCondition": "during the day",
 		"evos": ["Blissey"],
 		"eggGroups": ["Fairy"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"tangela": {
 		"num": 114,
@@ -2674,7 +2674,7 @@ pokedex = {
 		"evoType": "levelMove",
 		"evoMove": "Mimic",
 		"eggGroups": ["Human-Like"],
-		"canHatch": true,
+		"canHatch": "true",
 		"otherFormes": ["Mr. Mime-Galar"],
 		"formeOrder": ["Mr. Mime", "Mr. Mime-Galar"]
 	},
@@ -2695,7 +2695,7 @@ pokedex = {
 		"evoRegion": "Galar",
 		"evos": ["Mr. Rime"],
 		"eggGroups": ["Human-Like"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"scyther": {
 		"num": 123,
@@ -3114,7 +3114,7 @@ pokedex = {
 		"prevo": "Munchlax",
 		"evoType": "levelFriendship",
 		"eggGroups": ["Monster"],
-		"canHatch": true,
+		"canHatch": "true",
 		"canGigantamax": "G-Max Replenish"
 	},
 	"snorlaxgmax": {
@@ -3609,7 +3609,7 @@ pokedex = {
 		"color": "Yellow",
 		"evos": ["Pikachu"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true,
+		"canHatch": "true",
 		"otherFormes": ["Pichu-Spiky-eared"],
 		"formeOrder": ["Pichu", "Pichu-Spiky-eared"]
 	},
@@ -3639,7 +3639,7 @@ pokedex = {
 		"color": "Pink",
 		"evos": ["Clefairy"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"igglybuff": {
 		"num": 174,
@@ -3653,7 +3653,7 @@ pokedex = {
 		"color": "Pink",
 		"evos": ["Jigglypuff"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"togepi": {
 		"num": 175,
@@ -3667,7 +3667,7 @@ pokedex = {
 		"color": "White",
 		"evos": ["Togetic"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"togetic": {
 		"num": 176,
@@ -3791,7 +3791,7 @@ pokedex = {
 		"evoType": "levelFriendship",
 		"evos": ["Azumarill"],
 		"eggGroups": ["Water 1", "Fairy"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"azumarill": {
 		"num": 184,
@@ -3819,7 +3819,7 @@ pokedex = {
 		"evoType": "levelMove",
 		"evoMove": "Mimic",
 		"eggGroups": ["Mineral"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"politoed": {
 		"num": 186,
@@ -4078,7 +4078,7 @@ pokedex = {
 		"prevo": "Wynaut",
 		"evoLevel": 15,
 		"eggGroups": ["Amorphous"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"girafarig": {
 		"num": 203,
@@ -4476,7 +4476,7 @@ pokedex = {
 		"evoType": "levelExtra",
 		"evoCondition": "with a Remoraid in party",
 		"eggGroups": ["Water 1"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"skarmory": {
 		"num": 227,
@@ -4620,7 +4620,7 @@ pokedex = {
 		"color": "Purple",
 		"evos": ["Hitmonlee", "Hitmonchan", "Hitmontop"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"hitmontop": {
 		"num": 237,
@@ -4649,7 +4649,7 @@ pokedex = {
 		"color": "Pink",
 		"evos": ["Jynx"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"elekid": {
 		"num": 239,
@@ -4663,7 +4663,7 @@ pokedex = {
 		"color": "Yellow",
 		"evos": ["Electabuzz"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"magby": {
 		"num": 240,
@@ -4677,7 +4677,7 @@ pokedex = {
 		"color": "Red",
 		"evos": ["Magmar"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"miltank": {
 		"num": 241,
@@ -5557,7 +5557,7 @@ pokedex = {
 		"color": "Blue",
 		"evos": ["Marill"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"nosepass": {
 		"num": 299,
@@ -5850,7 +5850,7 @@ pokedex = {
 		"evoCondition": "during the day",
 		"evos": ["Roserade"],
 		"eggGroups": ["Fairy", "Grass"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"gulpin": {
 		"num": 316,
@@ -6499,7 +6499,7 @@ pokedex = {
 		"evoType": "levelFriendship",
 		"evoCondition": "at night",
 		"eggGroups": ["Amorphous"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"absol": {
 		"num": 359,
@@ -6539,7 +6539,7 @@ pokedex = {
 		"color": "Blue",
 		"evos": ["Wobbuffet"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"snorunt": {
 		"num": 361,
@@ -7327,7 +7327,7 @@ pokedex = {
 		"color": "Green",
 		"evos": ["Roselia"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"roserade": {
 		"num": 407,
@@ -7758,7 +7758,7 @@ pokedex = {
 		"color": "Yellow",
 		"evos": ["Chimecho"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"stunky": {
 		"num": 434,
@@ -7823,7 +7823,7 @@ pokedex = {
 		"color": "Brown",
 		"evos": ["Sudowoodo"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"mimejr": {
 		"num": 439,
@@ -7836,7 +7836,7 @@ pokedex = {
 		"color": "Pink",
 		"evos": ["Mr. Mime", "Mr. Mime-Galar"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"happiny": {
 		"num": 440,
@@ -7850,7 +7850,7 @@ pokedex = {
 		"color": "Pink",
 		"evos": ["Chansey"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"chatot": {
 		"num": 441,
@@ -7941,7 +7941,7 @@ pokedex = {
 		"color": "Black",
 		"evos": ["Snorlax"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"riolu": {
 		"num": 447,
@@ -7955,7 +7955,7 @@ pokedex = {
 		"color": "Blue",
 		"evos": ["Lucario"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"lucario": {
 		"num": 448,
@@ -8111,7 +8111,7 @@ pokedex = {
 		"color": "Blue",
 		"evos": ["Mantine"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"snover": {
 		"num": 459,
@@ -15342,7 +15342,7 @@ pokedex = {
 		"color": "Purple",
 		"evos": ["Toxtricity", "Toxtricity-Low-Key"],
 		"eggGroups": ["Undiscovered"],
-		"canHatch": true
+		"canHatch": "true"
 	},
 	"toxtricity": {
 		"num": 849,
@@ -16096,7 +16096,7 @@ pokedex = {
 		"tags": ["Restricted Legendary"],
 		"otherFormes": ["Zacian-Crowned"],
 		"formeOrder": ["Zacian", "Zacian-Crowned"],
-		"cannotDynamax": true
+		"cannotDynamax": "true"
 	},
 	"zaciancrowned": {
 		"num": 888,
@@ -16113,7 +16113,7 @@ pokedex = {
 		"eggGroups": ["Undiscovered"],
 		"requiredItem": "Rusted Sword",
 		"battleOnly": "Zacian",
-		"cannotDynamax": true
+		"cannotDynamax": "true"
 	},
 	"zamazenta": {
 		"num": 889,
@@ -16130,7 +16130,7 @@ pokedex = {
 		"tags": ["Restricted Legendary"],
 		"otherFormes": ["Zamazenta-Crowned"],
 		"formeOrder": ["Zamazenta", "Zamazenta-Crowned"],
-		"cannotDynamax": true
+		"cannotDynamax": "true"
 	},
 	"zamazentacrowned": {
 		"num": 889,
@@ -16147,7 +16147,7 @@ pokedex = {
 		"eggGroups": ["Undiscovered"],
 		"requiredItem": "Rusted Shield",
 		"battleOnly": "Zamazenta",
-		"cannotDynamax": true
+		"cannotDynamax": "true"
 	},
 	"eternatus": {
 		"num": 890,
@@ -16163,7 +16163,7 @@ pokedex = {
 		"tags": ["Restricted Legendary"],
 		"otherFormes": ["Eternatus-Eternamax"],
 		"formeOrder": ["Eternatus", "Eternatus-Eternamax"],
-		"cannotDynamax": true
+		"cannotDynamax": "true"
 	},
 	"eternatuseternamax": {
 		"num": 890,
@@ -16178,7 +16178,7 @@ pokedex = {
 		"weightkg": 0,
 		"color": "Purple",
 		"eggGroups": ["Undiscovered"],
-		"cannotDynamax": true
+		"cannotDynamax": "true"
 	},
 	"kubfu": {
 		"num": 891,
