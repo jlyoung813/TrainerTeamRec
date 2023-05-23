@@ -1,13 +1,12 @@
 import json
-def loadDicts():
-    
+def loadPokemon():
     with open('pokemon_data/pokedex.json', 'r') as file:
         pokedex = json.load(file)
+    return pokedex
+
+def loadMoves():
     with open('pokemon_data/moves.json', 'r') as file:
         movedex = json.load(file)
-    with open('pokemon_data/abilities.json', 'r') as file:
-        abilitydex = json.load(file)
-    
     #==========================shorthand list of properties to implment==========================
     
     #state is an object which contains the two states of the pokemon and field on both sides
@@ -32,7 +31,7 @@ def loadDicts():
     movedex['eruption']['basePowerModifier'] = lambda state, user, opponent : user.stats[0] // user.maxHp
     movedex['waterspout']['basePowerModifier'] = lambda state, user, opponent : user.stats[0] // user.maxHp
     movedex['gyroball']['basePowerModifier'] = lambda state, user, opponent : user.stats[5] // opponent.stats[5]
-    movedex['knockoff']['basePowerModifier'] = lambda state, user, opponent : 1.5 if opponent.removeItem() == True else 1 #removeItem is a function to remove item. should fail if target lacks item or is holding unremovable item
+    movedex['knockoff']['basePowerModifier'] = lambda state, user, opponent : 1.5 if opponent.item != None else 1 #removeItem is a function to remove item. should fail if target lacks item or is holding unremovable item
     movedex['poltergeist']['conditional'] = lambda state, user, opponent : True if opponent.item != None else False
     movedex['hex']['basePowerModifier'] = lambda state, user, opponent : 2 if opponent.status != None else 1
     movedex['weatherball']['basePowerModifier'] = lambda state, user, opponent : 2 if state.weather != None else 1
@@ -64,12 +63,18 @@ def loadDicts():
     # movedex['defog']['effect'] = 'defog'
     # movedex['haze']['effect'] = 'clearStats' #haze targets all, so should apply this effect to both sidescondition
     # movedex['trick']['effect'] = 'swapItems'
+    return movedex
+
+def loadAbilities():
+    
+    with open('pokemon_data/abilities.json', 'r') as file:
+        abilitydex = json.load(file)
     
     #==============================================================abilities============================================================================
     #basePowerModifiers are applied to the base damage
     abilitydex['ironfist']['basePowerModifier'] = lambda move, state, user, opponent : 1.2 if move['flags']['punch'] == 1 else 1 
     abilitydex['sheerforce']['basePowerModifier'] = lambda move, state, user, opponent : 1.3 if move['secondary'] is not None else 1
-    abilitydex['strongjaw']['basePowerModifier'] = lambda move, state, user, opponent : 1.5 if move['flags']['bite'] == 1 is not None else 1
+    abilitydex['strongjaw']['basePowerModifier'] = lambda move, state, user, opponent : 1.5 if move['flags']['bite'] == 1 else 1
     abilitydex['sandforce']['basePowerModifier'] = lambda move, state, user, opponent : 1.3 if (move['type'] == 'Ground' or move['type'] == 'Rock' or move['type'] == 'Steel') and state.weather == 'sandstorm' else 1
     
     #damageModifiers are applied at the  end of the damage formula
@@ -111,8 +116,8 @@ def loadDicts():
     abilitydex['windpower']['onActivate'] = lambda move, user : user.applyStatus({'volatileStatus' : 'charge'}) if move['flags']['wind'] == 1 else None
     
     # #recoil moves need some way to deal the recoil to the attacker. probably just logic at end of attack
-    abilitydex['ironbarbs']['onRecieveHit'] = {'chance' : 100, 'recoil' : [1, 8]}
-    abilitydex['roughskin']['onRecieveHit'] = {'chance' : 100, 'recoil' : [1, 8]}
+    abilitydex['ironbarbs']['onRecieveHit'] = {'chance' : 100, 'chip' : [1, 8]}
+    abilitydex['roughskin']['onRecieveHit'] = {'chance' : 100, 'chip' : [1, 8]}
     abilitydex['static']['onRecieveHit'] = {'chance' : 30, 'status' : 'par'}
     abilitydex['flamebody']['onRecieveHit'] = {'chance' : 30, 'status' : 'brn'}
     
@@ -131,7 +136,7 @@ def loadDicts():
     abilitydex['sandstream']['onEntry'] = lambda state, user, opponent : state.setWeather('sandstorm', 8 if user.item == 'Smooth Rock' else 5)
     abilitydex['snowwarning']['onEntry'] = lambda state, user, opponent : state.setWeather('hail', 8 if user.item == 'Icy Rock' else 5)
     
-    abilitydex['speedboost']['onTurnEnd'] = {'boosts' : {'spe': 1}}
+    abilitydex['speedboost']['onTurnEnd'] = lambda user : user.applyBoost({'spe': 1})
     abilitydex['sturdy']['onTurnEnd'] = lambda user : user.setSurviveOneHit(True) if user.stats.hp == user.stats.maxHp else user.setSurviveOneHit(False)
     
     abilitydex['regenerator']['onExit'] = {'heal' : [1, 3]} #this might be moved to a different property
@@ -141,4 +146,4 @@ def loadDicts():
     abilitydex['grimneigh']['onKO'] = lambda user : {'boosts' : {'spa': 1}}
     abilitydex['beastboost']['onKO'] = lambda user : {'boosts' : {user.highestStat() : 1}}
 
-    return pokedex, movedex, abilitydex
+    return abilitydex

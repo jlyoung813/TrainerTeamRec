@@ -1,5 +1,10 @@
 import math
-import pokedex
+
+from load_data import loadPokemon, loadMoves, loadAbilities
+pokedex = loadPokemon()
+movedex = loadMoves()
+abilitydex = loadAbilities()
+print(type(pokedex))
 
 def HpCalc(base,iv=0,ev=0):
     hp = math.floor(((2 * base + iv + math.floor(ev / 4)) * 100) / 100) + 100 + 10
@@ -42,7 +47,7 @@ natures = {"Adamant": ["atk", "spa"],
 class Pokemon:
     def __init__(self, name, ability, moves, evs=[0, 0, 0, 0, 0, 0], ivs=[31, 31, 31, 31, 31, 31], nature="Hardy",
                  item=""):
-        dex = pokedex.pokedex
+        dex = pokedex.copy()
         self.name = name
         self.types = dex[name]["types"]
         self.ability = ability
@@ -73,9 +78,17 @@ class Pokemon:
         self.weightkgs = dex[name]["weightkg"]
         self.status = None
         self.volatileStatus = []
+        self.lastUsedMove = -1
 
+        self.toxicMultiplier = 1
         self.trapped = False
+        self.tauntTurns = 0
+        self.disableTurns = 0
+        self.encoreTurns = 0
+        self.disabledMove = -1
+        self.encoredMove = -1
         self.ignoreSecondary = False
+        self.surviveOneHit = False
         self.ignoreScreens = False
         self.ignoreAbilities = False
 
@@ -110,27 +123,67 @@ class Pokemon:
             self.statStages[4] += boost['spe']
 
     def applyHeal(self, heal):
-        self.stats[0] += math.floor(self.maxHP / heal[1])
+        self.stats[0] += math.floor(self.maxHP / (heal[0] / heal[1]))
         if self.stats[0] > self.maxHP:
             self.stats[0] = self.maxHP
 
-    #misty terrain check should be in the move logic
-    def applyStatus(self, status):
+    #misty terrain check moved here
+    def applyStatus(self, status, isMisty):
         if status['status'] is not None:
-            if self.status is not None:
-                if (status == 'psn' or status == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
-                    status = None
-                if (status == 'brn') and ('Fire' in self.types):
-                    status = None
-                if (status == 'par') and ('Electric' in self.types):
-                    status = None
-                if (status == 'frz') and ('Ice' in self.types):
-                    status = None
-                self.status = status['status']
+            if not (isMisty == False and 'Flying' not in self.types and self.ability != 'levitate' and 'roost' not in self.volatileStatus):
+                if self.status is not None:
+                    if (status == 'psn' or status == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
+                        status = None
+                    if (status == 'brn') and ('Fire' in self.types):
+                        status = None
+                    if (status == 'par') and ('Electric' in self.types):
+                        status = None
+                    if (status == 'frz') and ('Ice' in self.types):
+                        status = None
+                    self.status = status['status']
         if status['volatileStatus'] is not None:
             if status['volatileStatus'] not in self.volatileStatus:
+                if status['volatileStatus'] == 'confusion':
+                    if isMisty == True and 'Flying' not in self.types and self.ability != 'levitate' and 'roost' not in self.volatileStatus:
+                        status = None
+                if status['volatileStatus'] == 'leechseed':    
+                    if 'Grass' not in self.types:
+                        status = None
                 self.volatileStatus.append(status['volatileStatus'])
-
+                if status['volatileStatus'] == 'taunt':
+                    self.tauntTurns = 3
+                if status['volatileStatus'] == 'disable':
+                    self.disableTurns = 3
+                    self.disabledMove = self.lastUsedMove
+                if status['volatileStatus'] == 'encore':
+                    self.encoreTurns = 3
+                    self.encoredMove = self.lastUsedMove
+    
+    def clearVolatile(self, volatileStatus):
+        if volatileStatus == 'all':
+            self.volatileStatus = []
+            self.tauntTurns = 0
+            self.disableTurns = 0
+            self.encoreTurns = 0
+            self.disabledMove = -1
+            self.encoredMove = -1
+        if volatileStatus in self.volatileStatus:
+            self.volatileStatus.pop(volatileStatus)
+            if volatileStatus == 'taunt':
+                self.tauntTurns = 0
+            if volatileStatus == 'disable':
+                self.disableTurns = 0
+                self.disabledMove = -1
+            if volatileStatus == 'encore':
+                self.encoreTurns = 0
+                self.encoredMove = -1
+    
+    #chip is going to encompass all % max hp damage. return True if the mon is Koed
+    def applyChip(self, chip):
+        if self.ability != 'magicguard':
+            self.stats[0] -= math.floor(self.maxHP / (chip[0] / chip[1]))
+            return self.stats[0] <= 0
+    
 def LoadSet(monSet):
     line1 = monSet[0].split('@')
     name = line1[0].lower().strip().replace('-', '').replace(' ', '')
@@ -211,3 +264,6 @@ def BuildSets():
         mons.append(mon)
     file.close()
     return mons
+
+mons = BuildSets()
+print(mons[0])

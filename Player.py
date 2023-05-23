@@ -11,6 +11,7 @@ class Player:
         self.hazards = []
         self.screens = []
         self.screensCountdowns = []  #screencountdowns should be popped when hitting 0
+        self.isMisty = False
       
     # incoming is the Pokemon object, may need to change ot index
     def switch(self, incomingIdx):
@@ -22,7 +23,7 @@ class Player:
         self.applyHazards(self, incoming)
         self.currentMon = incoming
         if self.currentMon.stats[0] <= 0:
-            # this is reached if a Pokemon is KOed to hazards, only return false to not apply switchin effects
+            # this is reached if a Pokemon is KOed to hazards, only return false so switchin effects arent applied
             return False
         return True
     
@@ -52,22 +53,19 @@ class Player:
     def applyHazardsDmg(self, incoming):
         #apply hazards
         if 'stealthrock' in self.hazards:
-            incoming.stats[0] -= math.floor(incoming.maxHp * 0.12 * math.prod(typeChart[t.lower()]["damageTaken"]['Rock']) for t in incoming.types)
+            incoming.applyChip([(math.prod(typeChart[t.lower()]["damageTaken"]['Rock']) for t in incoming.types), 8])
         if 'spikes' in self.hazards:
-            if 'Flying' not in incoming.types or incoming.ability == 'Levitate':
-                damage = 0.12
+            if 'Flying' not in incoming.types and incoming.ability != 'Levitate':
+                damage = [1, 8]
                 if self.hazards.count('spikes') == 2:
-                    damage = 0.18
+                    damage = [1, 6]
                 elif self.hazards.count('spikes') == 3:
-                    damage = 0.25
-            incoming.stats[0] -= math.floor(incoming.maxHp * damage)
+                    damage = [1, 4]
+            incoming.applyChip(damage)
         if 'toxicspikes' in self.hazards:
-            if 'Flying' not in incoming.types or incoming.ability == 'Levitate':
+            if 'Flying' not in incoming.types and incoming.ability != 'Levitate':
                 if 'Poison' not in incoming.types:
-                    sts = {'status': 'psn'}
-                    if self.hazards.count('toxicspikes') == 2:
-                        sts = {'status': 'tox'}
-                    incoming.applyStatus(sts)
+                    incoming.applyStatus({'status': 'tox'} if self.hazards.count('toxicspikes') == 2 else {'status': 'psn'},  self.isMisty)
                 else:
                     self.hazards = list(filter(lambda a: a != 'toxicspikes', self.hazards))
         
