@@ -55,7 +55,7 @@ class Player:
         if 'stealthrock' in self.hazards:
             incoming.applyChip([(math.prod(typeChart[t.lower()]["damageTaken"]['Rock']) for t in incoming.types), 8])
         if 'spikes' in self.hazards:
-            if 'Flying' not in incoming.types and incoming.ability != 'Levitate':
+            if incoming.grounded():
                 damage = [1, 8]
                 if self.hazards.count('spikes') == 2:
                     damage = [1, 6]

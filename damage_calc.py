@@ -1,5 +1,7 @@
 import math
 
+import Pokemon
+
 stats = ["hp", "atk", "def", "spa", "spd", "spe"]
 
 typeChart = {"bug": {
@@ -408,33 +410,70 @@ class calc:
 	def DamageCalc(self, mon1, mon2, move, field, random):
 		moves = self.movedex
 		abilities = self.abilitydex
+		move_type = moves[move]["type"]
+		if "overrideType" in moves[move].keys():
+			move_type = moves[move]['overrideType'](field, mon1, mon2)
+		burn = 1
 		if moves[move]["category"] == "Status":
 			return 0
+		atk_stage = 1
+		def_stage = 1
+		choice = 1
 		if moves[move]["category"] == "Physical":
 			attack = mon1.stats[1]
+			atk_stage = Pokemon.stage(mon1.statStages[1])
 			defense = mon2.stats[2]
+			def_stage = Pokemon.stage(mon2.statStages[2])
 			if mon1.item == "Choice Band":
-				attack *= 1.5
+				choice = 1.5
+			if mon1.status == 'burn':
+				burn = 0.5
+
 		if moves[move]["category"] == "Special":
 			attack = mon1.stats[3]
+			atk_stage = Pokemon.stage(mon1.statStages[3])
 			defense = mon2.stats[4]
+			def_stage = Pokemon.stage(mon2.statStages[4])
 			if mon1.item == "Choice Specs":
-				attack *= 1.5
+				choice = 1.5
 			if mon2.item == "Assault Vest":
 				defense *= 1.5
 		if "overrideOffensiveStat" in moves[move].keys():
 			for loc, stat in enumerate(stats):
 				if stat == moves[move]["overrideOffensiveStat"]:
 					attack = mon1.stats[loc]
+					atk_stage = Pokemon.stage(mon1.statStages[loc])
 		if "overrideDefensiveStat" in moves[move].keys():
 			for loc, stat in enumerate(stats):
 				if stat == moves[move]["overrideDefensiveStat"]:
 					defense = mon2.stats[loc]
+					def_stage = Pokemon.stage(mon2.statStages[loc])
+		attack = math.floor(attack * atk_stage)
+		defense = math.floor(defense * def_stage)
 		power = moves[move]["basePower"]
 		if "basePowerModifier" in moves[move].keys():
 			power = moves[move]["basePowerModifier"](field, mon1, mon2)
-		damage = math.floor((((2*100)/5+2) * power * (attack / defense))/50+2)
-		move_type = moves[move]["type"]
+		weather = 1
+		if field.weather == 'drought':
+			if move_type == 'Fire':
+				weather = 1.5
+			if move_type == 'Water':
+				weather = 0.5
+		if field.weather == 'raindance':
+			if move_type == 'Fire':
+				weather = 0.5
+			if move_type == 'Water':
+				weather = 1.5
+		if not (mon1.grounded()):
+			if field.terrain == "grassyterrain" and move_type == 'Grass':
+				power *= 1.3
+			if field.terrain == "electricterrain" and move_type == 'Electric':
+				power *= 1.3
+			if field.terrain == "psychicterrain" and move_type == 'Psychic':
+				power *= 1.3
+			if field.terrain == "mistyterrain" and move_type == 'Dragon':
+				power *= 0.5
+		damage = math.floor((((2*100)/5+2) * power * (attack * 1.5 / defense))/50+2)
 		if move_type == "Ground" and mon2.item == "Air Balloon":
 			return 0
 		if mon1.types.count(move_type) > 0:
@@ -452,5 +491,5 @@ class calc:
 			ability1 = abilities[mon1.ability]["basePowerModifier"](moves[move], field, mon1, mon2)
 		if "incomingModifier" in abilities[mon2.ability].keys():
 			ability2 = abilities[mon2.ability]["incomingModifier"](moves[move], mon2)
-		damage *= lorb * ability1 * ability2
+		damage *= lorb * ability1 * ability2 * burn * weather
 		return math.floor(damage * random)

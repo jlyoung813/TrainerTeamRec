@@ -74,7 +74,6 @@ class Pokemon:
         self.item = item
         self.maxHp = self.stats[0]
         self.statStages = [0, 0, 0, 0, 0]
-        self.removeItem = True
         self.weightkgs = dex[name]["weightkg"]
         self.status = None
         self.volatileStatus = []
@@ -102,7 +101,7 @@ class Pokemon:
         if self.item == None:
             return False
         else:
-            self.item = None
+            #self.item = None
             return True
 
 
@@ -130,7 +129,7 @@ class Pokemon:
     #misty terrain check moved here
     def applyStatus(self, status, isMisty):
         if status['status'] is not None:
-            if not (isMisty == False and 'Flying' not in self.types and self.ability != 'levitate' and 'roost' not in self.volatileStatus):
+            if not (isMisty == True and self.grounded()):
                 if self.status is not None:
                     if (status == 'psn' or status == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
                         status = None
@@ -144,7 +143,7 @@ class Pokemon:
         if status['volatileStatus'] is not None:
             if status['volatileStatus'] not in self.volatileStatus:
                 if status['volatileStatus'] == 'confusion':
-                    if isMisty == True and 'Flying' not in self.types and self.ability != 'levitate' and 'roost' not in self.volatileStatus:
+                    if isMisty == True and self.grounded():
                         status = None
                 if status['volatileStatus'] == 'leechseed':    
                     if 'Grass' not in self.types:
@@ -184,6 +183,19 @@ class Pokemon:
             self.stats[0] -= math.floor(self.maxHP / (chip[0] / chip[1]))
             return self.stats[0] <= 0
     
+
+    def grounded(self):
+        return 'Flying' not in self.types and self.ability != 'levitate' and self.item != 'Air Balloon' and 'roost' not in self.volatileStatus
+
+def stage(stage):
+    numerator = 2
+    denominator = 2
+    if stage < 0:
+        denominator -= stage
+    else:
+        numerator += stage
+    return numerator / denominator
+
 def LoadSet(monSet):
     line1 = monSet[0].split('@')
     name = line1[0].lower().strip().replace('-', '').replace(' ', '')
@@ -253,12 +265,12 @@ def LoadSet(monSet):
 
 
 def BuildSets():
-    file = open('sets.txt', 'r')
+    file = open('teams.txt', 'r')
     lines = file.read()
-    lines = lines.split('#')
+    lines = lines.split('\n')
     mons = []
-    for line in lines:
-        line = line.strip().split('\n')
+    for i in range(0, len(lines), 9):
+        line = lines[i:i+8]
         sets = [line[0], line[1], line[2], line[3], line[4:]]
         mon = LoadSet(sets)
         mons.append(mon)
