@@ -114,5 +114,61 @@ class Player:
     def evaluate_move(self, mon, opponent, move, field):
         damage = dmg_calc.DamageCalc(mon, opponent, move, field, 0.92)
         if damage == 0:
+            move_data = movedex[move]
+            accuracy = move_data['accuracy'] / 100
+            if move == "stealthrock":
+                return 49 * "stealthrock" not in field.players[1 - self.id].hazards
+            if move == 'spikes':
+                return 16 * (3 - field.players[1 - self.id].hazards.count('spikes'))
+            if move == 'toxicspikes':
+                return 23 * (2 - field.players[1 - self.id].hazards.count('toxicspikes'))
+            if move == 'auroraveil':
+                return 49 * "auroraveil" not in self.screens
+            if move == 'taunt':
+                count_status = 0
+                for m in opponent.moves:
+                    count_status += movedex[m.lower()]['category'] == 'Status'
+                return 20 * count_status * 'taunt' not in opponent.volatileStatus
+            if move == 'trick':
+                count_status = 0
+                for m in opponent.moves:
+                    count_status += movedex[m.lower()]['category'] == 'Status'
+                return 20 * count_status * (mon.item is not None and 'Choice' in mon.item)
+            if move == 'defog':
+                return 25 * self.hazards.count('stealthrock') + 8 * self.hazards.count('spikes') + 12.5 * self.hazards.count('toxicspikes')
+            if move == 'haze':
+                sum = 0
+                for i in range(len(opponent.statStages)):
+                    sum += opponent.statStages[i]
+                for i in range(len(mon.statStages)):
+                    sum -= mon.statStages[i]
+                return min(sum * 25, 99)
+            if 'status' in move_data.keys():
+                if opponent.status is not None:
+                    return 0
+                if move_data['status'] == 'tox':
+                    return 49 * (not ('Poison' in opponent.types or 'Steel' in opponent.types)) * accuracy
+                if move_data['status'] == 'par':
+                    return 49 * (not ('Electric' in opponent.types or 'Ground' in opponent.types)) * accuracy
+                if move_data['status'] == 'brn':
+                    count_phys = 0
+                    for m in opponent.moves:
+                        count_phys += movedex[m.lower()]['category'] == 'Physical'
+                    print(accuracy)
+                    return (12 * count_phys * 'Fire' not in opponent.types) * accuracy
+                if move_data['status'] == 'slp':
+                    return 51 * (not (self.isMisty or field.terrain == 'electricterrain')) * accuracy
+            if 'heal' in move_data.keys():
+                return min(move_data['heal'][0] / move_data['heal'][1], (1 - mon.stats[0] / mon.maxHp)) * 100
+            if 'boost' in move_data.keys():
+                sum = 0
+                for stat in move_data['boost'].keys():
+                    loc = stats = ["atk", "def", "spa", "spd", "spe"].index(stat)
+                    stage = mon.statStages[loc]
+                    if move_data['boost'][stat] < 0:
+                        sum += move_data['boost'][stat]
+                    elif stage < 2:
+                        sum += move_data['boost'][stat]
+                return min(sum * 25.5, 99)
             return 0
         return (1 / math.ceil(opponent.stats[0] / damage)) * 100

@@ -114,7 +114,7 @@ class Pokemon:
             if 'boosts' in effect.keys():
                 self.applyBoost(effect['boosts'])
             if 'heal' in effect.keys():
-                self.applyHeal(effect, self.maxHp)
+                self.applyHeal(effect['heal'], self.maxHp)
             if 'status' in effect.keys():
                 self.applyStatus(effect, isMisty)
             if 'chip' in effect.keys():

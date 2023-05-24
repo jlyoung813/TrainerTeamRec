@@ -78,14 +78,18 @@ def battle(team1, team2):
                 if action[0] == 'attack':
                     mon1 = players[i].currentMon
                     mon2 = players[1 - i].currentMon
-                    if mon1 is not None:
+                    if mon1 is not None and 'flinch' not in mon1.volatileStatus:
                         move = mon1.moves[action[1]].lower()
                         move_data = movedex[move]
-                        if mon1.item in ['Choice Band', 'Choice Specs', 'Choice Scarf']:
-                            mon1.applyStatus({'volatileStatus': 'encore'}, False)
-                            mon1.encoreTurns = -1
-                            mon1.encoredMove = action[1]
-                        if prio == move_data['priority']:
+                        chance = 100
+                        if mon1.status == 'par':
+                            chance = 25
+                        full_para = random.randrange(0, 100, 1)
+                        if prio == move_data['priority'] and full_para < chance:
+                            if mon1.item in ['Choice Band', 'Choice Specs', 'Choice Scarf']:
+                                mon1.applyStatus({'volatileStatus': 'encore'}, False)
+                                mon1.encoreTurns = -1
+                                mon1.encoredMove = action[1]
                             if move == 'defog':
                                 field.defog()
                             if move == 'haze':
@@ -97,8 +101,13 @@ def battle(team1, team2):
                                     players[i].applySideEffect(move_data['sideCondition'])
                                 else:
                                     players[1 - i].applySideEffect(move_data['sideCondition'])
-                            mon1.applyEffect(move_data, player1.isMisty)
-                            if mon2 is not None:
+                            if move_data['target'] == 'self':
+                                mon1.applyEffect(move_data, player1.isMisty)
+                            elif mon2 is not None:
+                                if move == 'trick':
+                                    item = mon1.item
+                                    mon1.item = mon2.item
+                                    mon2.item = mon1.item
                                 hits = 1
                                 if 'multihit' in move_data.keys():
                                     hits = move_data['multihit']
@@ -124,6 +133,8 @@ def battle(team1, team2):
                                             mon2.item = None
                                         mon2.stats[0] -= damage
                                         effect = None
+                                        if 'status' in move_data.keys():
+                                            mon2.applyStatus(move_data, player1.isMisty)
                                         if 'secondary' in move_data.keys():
                                             effect = move_data['secondary']
                                         if effect is not None:

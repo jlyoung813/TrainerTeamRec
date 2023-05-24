@@ -94,15 +94,15 @@ class State:
                 if i.currentMon is not None:
                     if 'Flying' not in i.currentMon.types and \
                     i.currentMon.ability != 'levitate':
-                        i.currentMon.applyHeal([1, 16], i.currentMon.maxHP)
+                        i.currentMon.applyHeal([1, 16], i.currentMon.maxHp)
                         
         for i in self.players:
             if i.currentMon is not None:
                 if i.currentMon.item != 'Leftovers':
-                    i.currentMon.applyHeal([1, 16], i.currentMon.maxHP)
+                    i.currentMon.applyHeal([1, 16], i.currentMon.maxHp)
                 if i.currentMon.item != 'Black Sludge':
                     if 'Poison' in i.currentMon.types:
-                        i.currentMon.applyHeal([1, 16], i.currentMon.maxHP)
+                        i.currentMon.applyHeal([1, 16], i.currentMon.maxHp)
                     else:
                         if i.currentMon.applyChip([1, 8]):
                             i.currentMon = None
@@ -113,7 +113,7 @@ class State:
                     if i.currentMon.applyChip([1, 8]):
                             i.currentMon = None
                     if [j for j in self.players if j != i] is not []:
-                        [j for j in self.players if j != i][0].applyHeal([1, 8], i.currentMon.maxHP)
+                        [j for j in self.players if j != i][0].applyHeal([1, 8], i.currentMon.maxHp)
                         
         for i in self.players:
             if i.currentMon is not None:
@@ -143,10 +143,11 @@ class State:
                 
         for i in self.players:
             if i.currentMon is not None:
+                i.currentMon.clearVolatile('flinch')
                 if i.currentMon.tauntTurns > 0:
                     i.currentMon.tauntTurns -= 1
                     if i.currentMon.tauntTurns == 0:
-                        i.currentMon.clearVolatile('taunt') 
+                        i.currentMon.clearVolatile('taunt')
                 if i.currentMon.disableTurns > 0:
                     i.currentMon.disableTurns -= 1
                     if i.currentMon.disableTurns == 0:
@@ -154,7 +155,9 @@ class State:
                 if i.currentMon.encoreTurns > 0:
                     i.currentMon.encoreTurns -= 1
                     if i.currentMon.encoreTurns == 0:
-                        i.currentMon.clearVolatile('encore') 
+                        i.currentMon.clearVolatile('encore')
+                    if i.currentMon.encoreTurns == -1 and 'choice' not in i.currentMon.item:
+                        i.currentMon.clearVolatile('encore')
                 if i.currentMon.partialTrapTurns > 0:
                     i.currentMon.partialTrapTurns -= 1
                     if i.currentMon.partialTrapTurns == 0:

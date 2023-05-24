@@ -119,10 +119,10 @@ def loadAbilities():
     abilitydex['windpower']['onActivate'] = lambda move, user : user.applyStatus({'volatileStatus' : 'charge'}, False) if move['flags']['wind'] == 1 else None
     
     # #recoil moves need some way to deal the recoil to the attacker. probably just logic at end of attack
-    abilitydex['ironbarbs']['onRecieveHit'] = lambda move : {'chance' : 100, 'chip' : [1, 8]} if 'contact' in move['flags'].keys() else None
-    abilitydex['roughskin']['onRecieveHit'] = lambda move : {'chance' : 100, 'chip' : [1, 8]} if 'contact' in move['flags'].keys() else None
-    abilitydex['static']['onRecieveHit'] = lambda move : {'chance' : 30, 'status' : 'par'} if 'contact' in move['flags'].keys() else None
-    abilitydex['flamebody']['onRecieveHit'] = lambda move : {'chance' : 30, 'status' : 'brn'} if 'contact' in move['flags'].keys() else None
+    abilitydex['ironbarbs']['onRecieveHit'] = {'chance' : 100, 'chip' : [1, 8]}
+    abilitydex['roughskin']['onRecieveHit'] = {'chance' : 100, 'chip' : [1, 8]}
+    abilitydex['static']['onRecieveHit'] = {'chance' : 30, 'status' : 'par'}
+    abilitydex['flamebody']['onRecieveHit'] = {'chance' : 30, 'status' : 'brn'}
     
     #logic for these properties should be included in the pokemon objects themselves and checked as needed
     abilitydex['sheerforce']['onEntry'] = lambda state, user, opponent : user.ignoreSecondary == True
