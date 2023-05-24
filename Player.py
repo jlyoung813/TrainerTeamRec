@@ -62,6 +62,8 @@ class Player:
             
     def applyHazardsDmg(self, incoming):
         #apply hazards
+        if incoming.item == "Heavy-Duty Boots":
+            return False
         if 'stealthrock' in self.hazards:
             incoming.applyChip([(math.prod(typeChart[t.lower()]["damageTaken"]['Rock']) for t in incoming.types), 8])
         if 'spikes' in self.hazards:

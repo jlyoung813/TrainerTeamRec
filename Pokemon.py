@@ -1,5 +1,5 @@
 import math
-
+import random
 from load_data import loadPokemon, loadMoves, loadAbilities
 pokedex = loadPokemon()
 movedex = loadMoves()
@@ -93,9 +93,6 @@ class Pokemon:
     def __str__(self):
         return f"{self.name} @ {self.item}\nAbility: {self.ability}\n{self.nature} Nature"
 
-
-        return "%s @ %s\nAbility: %s\n%s Nature" % (self.name, self.item, self.ability, self.nature)
-
     def removeItem(self):
         if self.item == None:
             return False
@@ -104,8 +101,20 @@ class Pokemon:
             return True
 
 
-    # def applyEffect(effect):
-    #     return
+    def applyEffect(self, effect):
+        chance = 101
+        if chance in effect.keys():
+            chance = effect['chance']
+        rand = random.randrange(0, 100, 1)
+        if rand < chance:
+            if 'boosts' in effect.keys():
+                self.applyBoost(effect['boosts'])
+            if 'heal' in effect.keys():
+                self.applyHeal(effect)
+            if 'status' in effect.keys():
+                self.applyStatus(effect['status'])
+            if 'chip' in effect.keys():
+                self.applyChip(effect['chip'])
 
     #this function should parse various effects(recoil, stat modifications, healing)
     def applyBoost(self, boost):
@@ -121,14 +130,14 @@ class Pokemon:
             self.statStages[4] += boost['spe']
 
     def applyHeal(self, heal):
-        self.stats[0] += math.floor(self.maxHP / (heal[0] / heal[1]))
+        self.stats[0] += math.floor(self.maxHP * (heal[0] / heal[1]))
         if self.stats[0] > self.maxHP:
             self.stats[0] = self.maxHP
 
     #misty terrain check moved here
     def applyStatus(self, status, isMisty):
         if status['status'] is not None:
-            if not (isMisty == True and self.grounded()):
+            if not (isMisty and self.grounded()):
                 if self.status is not None:
                     if (status == 'psn' or status == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
                         status = None
@@ -142,10 +151,10 @@ class Pokemon:
         if status['volatileStatus'] is not None:
             if status['volatileStatus'] not in self.volatileStatus:
                 if status['volatileStatus'] == 'confusion':
-                    if isMisty == True and self.grounded():
+                    if isMisty and self.grounded():
                         status = None
                 if status['volatileStatus'] == 'leechseed':    
-                    if 'Grass' not in self.types:
+                    if 'Grass' in self.types:
                         status = None
                 self.volatileStatus.append(status['volatileStatus'])
                 if status['volatileStatus'] == 'taunt':
@@ -179,7 +188,7 @@ class Pokemon:
     #chip is going to encompass all % max hp damage. return True if the mon is Koed
     def applyChip(self, chip):
         if self.ability != 'magicguard':
-            self.stats[0] -= math.floor(self.maxHP / (chip[0] / chip[1]))
+            self.stats[0] -= math.floor(self.maxHP * (chip[0] / chip[1]))
             return self.stats[0] <= 0
 
     def grounded(self):
