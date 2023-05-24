@@ -1,6 +1,10 @@
 import math
 
 import Pokemon
+from load_data import loadPokemon, loadMoves, loadAbilities
+pokedex = loadPokemon()
+movedex = loadMoves()
+abilitydex = loadAbilities()
 
 stats = ["hp", "atk", "def", "spa", "spd", "spe"]
 
@@ -403,13 +407,14 @@ typeChart = {"bug": {
 }
 
 class calc:
-	def __init__(self, movedex, abilitydex):
-		self.movedex = movedex
-		self.abilitydex = abilitydex
+	def __init__(self):
+		pass
 
 	def DamageCalc(self, mon1, mon2, move, field, random):
-		moves = self.movedex
-		abilities = self.abilitydex
+		moves = movedex
+		abilities = abilitydex
+		if 'overrideDamage' in moves[move].keys():
+			return moves[move]['overrideDamage'](field, mon1, mon2)
 		move_type = moves[move]["type"]
 		if "overrideType" in moves[move].keys():
 			move_type = moves[move]['overrideType'](field, mon1, mon2)
@@ -426,7 +431,7 @@ class calc:
 			def_stage = Pokemon.stage(mon2.statStages[2])
 			if mon1.item == "Choice Band":
 				choice = 1.5
-			if mon1.status == 'burn':
+			if mon1.status == 'brn':
 				burn = 0.5
 
 		if moves[move]["category"] == "Special":
@@ -473,7 +478,7 @@ class calc:
 				power *= 1.3
 			if field.terrain == "mistyterrain" and move_type == 'Dragon':
 				power *= 0.5
-		damage = math.floor((((2*100)/5+2) * power * (attack * 1.5 / defense))/50+2)
+		damage = math.floor((((2*100)/5+2) * power * (attack * choice / defense))/50+2)
 		if move_type == "Ground" and mon2.item == "Air Balloon":
 			return 0
 		if mon1.types.count(move_type) > 0:
@@ -489,7 +494,7 @@ class calc:
 		ability2 = 1
 		if "basePowerModifier" in abilities[mon1.ability].keys():
 			ability1 = abilities[mon1.ability]["basePowerModifier"](moves[move], field, mon1, mon2)
-		if "incomingModifier" in abilities[mon2.ability].keys():
+		if not mon1.ignoreAbilities and "incomingModifier" in abilities[mon2.ability].keys():
 			ability2 = abilities[mon2.ability]["incomingModifier"](moves[move], mon2)
 		damage *= lorb * ability1 * ability2 * burn * weather
 		return math.floor(damage * random)

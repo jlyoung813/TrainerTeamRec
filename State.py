@@ -44,12 +44,14 @@ class State:
         self.terrainCount = 0
 
     def haze(self):
-        self.player1.currentMon.statStages = [0, 0, 0, 0, 0]
-        self.player2.currentMon.statStages = [0, 0, 0, 0, 0]
+        for p in self.players:
+            self.player1.currentMon.statStages = [0, 0, 0, 0, 0]
     
     def switch(self, playerIdx, incomingIdx):
         if self.players[playerIdx].switch(incomingIdx):
-            abilitydex[self.players[playerIdx].currentMon.ability]['onEntry'](self, self.players[playerIdx], self.players[1-playerIdx])
+            ability = abilitydex[self.players[playerIdx].currentMon.ability]
+            if 'onEntry' in ability.keys():
+                ability['onEntry'](self, self.players[playerIdx].currentMon, self.players[1-playerIdx].currentMon)
     
     def end_of_turn(self):
     #lefties, weather, status, seeds
@@ -58,7 +60,7 @@ class State:
             self.weather = None
         self.terrainCount -= 1 if self.terrainCount > 0 else 0
         if self.terrainCount == 0:
-            self.terrain = None
+            self.setTerrain(None, 0)
             
         if self.weather == 'sandstorm':
             for i in self.players:

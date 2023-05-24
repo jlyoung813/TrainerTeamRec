@@ -44,7 +44,7 @@ def loadMoves():
                                                                             'Ice' if state.weather == 'hail' or state.weather == 'snow' else \
                                                                             'Normal'
     #insert terrain pulse here
-    movedex['finalgambit']['overrideDamage'] = lambda state, user, opponent : user.stats.hp
+    movedex['finalgambit']['overrideDamage'] = lambda state, user, opponent : user.stats[0]
     
     #can be changed to multipliers by turning ints into acc/70 fractions
     movedex['hurricane']['accuracyModifier'] = lambda state, user, opponent : 101 if state.weather == 'raindance' else 50 if state.weather == 'sunnyday' else 70
@@ -73,7 +73,7 @@ def loadAbilities():
     #==============================================================abilities============================================================================
     #basePowerModifiers are applied to the base damage
     abilitydex['ironfist']['basePowerModifier'] = lambda move, state, user, opponent: 1.2 if 'punch' in move['flags'].keys() else 1
-    abilitydex['sheerforce']['basePowerModifier'] = lambda move, state, user, opponent : 1.3 if 'secondary' in move.keys() else 1
+    abilitydex['sheerforce']['basePowerModifier'] = lambda move, state, user, opponent : 1.3 if move['secondary'] is not None else 1
     abilitydex['strongjaw']['basePowerModifier'] = lambda move, state, user, opponent : 1.5 if 'bite' in move['flags'].keys() else 1
     abilitydex['sandforce']['basePowerModifier'] = lambda move, state, user, opponent : 1.3 if (move['type'] == 'Ground' or move['type'] == 'Rock' or move['type'] == 'Steel') and state.weather == 'sandstorm' else 1
     abilitydex['technician']['basePowerModifier'] = lambda move, state, user, opponent : 1.5 if move['basePower'] <= 60 else 1

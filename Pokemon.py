@@ -4,7 +4,6 @@ from load_data import loadPokemon, loadMoves, loadAbilities
 pokedex = loadPokemon()
 movedex = loadMoves()
 abilitydex = loadAbilities()
-print(type(pokedex))
 
 def HpCalc(base,iv=0,ev=0):
     hp = math.floor(((2 * base + iv + math.floor(ev / 4)) * 100) / 100) + 100 + 10
@@ -110,15 +109,15 @@ class Pokemon:
 
     #this function should parse various effects(recoil, stat modifications, healing)
     def applyBoost(self, boost):
-        if 'atk' in boost:
+        if 'atk' in boost and (self.statStages[0] + boost['atk'] <= 6) and (self.statStages[0] + boost['atk'] >= 0):
             self.statStages[0] += boost['atk']
-        if 'def' in boost:
+        if 'def' in boost and (self.statStages[1] + boost['def'] <= 6) and (self.statStages[1] + boost['def'] >= 0):
             self.statStages[1] += boost['def']
-        if 'spa' in boost:
+        if 'spa' in boost and (self.statStages[2] + boost['spa'] <= 6) and (self.statStages[2] + boost['spa'] >= 0):
             self.statStages[2] += boost['spa']
-        if 'spd' in boost:
+        if 'spd' in boost and (self.statStages[3] + boost['spd'] <= 6) and (self.statStages[3] + boost['spd'] >= 0):
             self.statStages[3] += boost['spd']
-        if 'spe' in boost:
+        if 'spe' in boost and (self.statStages[4] + boost['spe'] <= 6) and (self.statStages[4] + boost['spe'] >= 0):
             self.statStages[4] += boost['spe']
 
     def applyHeal(self, heal):
@@ -182,10 +181,12 @@ class Pokemon:
         if self.ability != 'magicguard':
             self.stats[0] -= math.floor(self.maxHP / (chip[0] / chip[1]))
             return self.stats[0] <= 0
-    
 
     def grounded(self):
         return 'Flying' not in self.types and self.ability != 'levitate' and self.item != 'Air Balloon' and 'roost' not in self.volatileStatus
+
+    def surviveOneHit(self):
+        return self.maxHp == self.stats[0] and (self.item == 'Focus Sash' or self.ability == 'Sturdy')
 
 def stage(stage):
     numerator = 2
@@ -276,6 +277,3 @@ def BuildSets():
         mons.append(mon)
     file.close()
     return mons
-
-mons = BuildSets()
-print(mons[0])

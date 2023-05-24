@@ -2,6 +2,10 @@
 from Pokemon import Pokemon
 from damage_calc import typeChart
 import math
+from load_data import loadPokemon, loadMoves, loadAbilities
+pokedex = loadPokemon()
+movedex = loadMoves()
+abilitydex = loadAbilities()
 
 class Player:
     def __init__(self, id, team=[Pokemon]):
@@ -15,12 +19,17 @@ class Player:
       
     # incoming is the Pokemon object, may need to change ot index
     def switch(self, incomingIdx):
-        if self.currentMon.stats[0] <= 0:
+        incoming = self.team[incomingIdx]
+        if incoming is None or incoming.stats[0] <= 0:
             print("shouldnt try to switch to KOed Pokemon")
             return False
-        incoming = self.team[incomingIdx]
         self.currentMon.volatileStatus = []
-        self.applyHazards(self, incoming)
+        self.currentMon.statStages = [0, 0, 0, 0, 0]
+        ability = abilitydex[self.currentMon.ability]
+        if 'onExit' in ability.keys():
+            heal = ability['onExit']
+            self.currentMon.applyHeal(heal)
+        self.applyHazardsDmg(self, incoming)
         self.currentMon = incoming
         if self.currentMon.stats[0] <= 0:
             # this is reached if a Pokemon is KOed to hazards, only return false so switchin effects arent applied
@@ -72,3 +81,8 @@ class Player:
     def defog(self):
         self.hazards = []
         self.screens = []
+
+    def lead(self, other_player):
+        return 0
+        #pick mon to lead with based on other player team
+        #need to write ai logic for this
