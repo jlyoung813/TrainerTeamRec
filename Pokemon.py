@@ -101,7 +101,7 @@ class Pokemon:
             return True
 
 
-    def applyEffect(self, effect):
+    def applyEffect(self, effect, isMisty=False):
         chance = 101
         if chance in effect.keys():
             chance = effect['chance']
@@ -112,7 +112,7 @@ class Pokemon:
             if 'heal' in effect.keys():
                 self.applyHeal(effect)
             if 'status' in effect.keys():
-                self.applyStatus(effect['status'])
+                self.applyStatus(effect, isMisty)
             if 'chip' in effect.keys():
                 self.applyChip(effect['chip'])
 
@@ -130,13 +130,13 @@ class Pokemon:
             self.statStages[4] += boost['spe']
 
     def applyHeal(self, heal):
-        self.stats[0] += math.floor(self.maxHP * (heal[0] / heal[1]))
-        if self.stats[0] > self.maxHP:
-            self.stats[0] = self.maxHP
+        self.stats[0] += math.floor(self.maxHp * (heal[0] / heal[1]))
+        if self.stats[0] > self.maxHp:
+            self.stats[0] = self.maxHp
 
     #misty terrain check moved here
     def applyStatus(self, status, isMisty):
-        if status['status'] is not None:
+        if 'status' in status.keys():
             if not (isMisty and self.grounded()):
                 if self.status is not None:
                     if (status == 'psn' or status == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
@@ -148,7 +148,7 @@ class Pokemon:
                     if (status == 'frz') and ('Ice' in self.types):
                         status = None
                     self.status = status['status']
-        if status['volatileStatus'] is not None:
+        if 'volatileStatus' in status.keys():
             if status['volatileStatus'] not in self.volatileStatus:
                 if status['volatileStatus'] == 'confusion':
                     if isMisty and self.grounded():
@@ -188,13 +188,13 @@ class Pokemon:
     #chip is going to encompass all % max hp damage. return True if the mon is Koed
     def applyChip(self, chip):
         if self.ability != 'magicguard':
-            self.stats[0] -= math.floor(self.maxHP * (chip[0] / chip[1]))
+            self.stats[0] -= math.floor(self.maxHp * (chip[0] / chip[1]))
             return self.stats[0] <= 0
 
     def grounded(self):
         return 'Flying' not in self.types and self.ability != 'levitate' and self.item != 'Air Balloon' and 'roost' not in self.volatileStatus
 
-    def surviveOneHit(self):
+    def surviveOhko(self):
         return self.maxHp == self.stats[0] and (self.item == 'Focus Sash' or self.ability == 'Sturdy')
 
 def stage(stage):

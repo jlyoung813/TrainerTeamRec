@@ -2,7 +2,7 @@ import math
 import random
 
 import Pokemon
-from Pokemon import Pokemon
+#from Pokemon import Pokemon
 import Player
 from Player import Player
 import State
@@ -39,8 +39,9 @@ def battle(team1, team2):
 
     hp1 = 1
     hp2 = 1
+    turns = 0
     # terminate when all mons on 1 team are dead
-    while hp1 > 0 and hp2 > 0:
+    while hp1 > 0 and hp2 > 0 and turns < 1000:
         # calc speed order
         speed1 = math.floor(player1.currentMon.stats[5] * Pokemon.stage(player1.currentMon.statStages[4]))
         if player1.currentMon.status == 'par':
@@ -55,7 +56,11 @@ def battle(team1, team2):
             players = [player2, player1]
         actions = []
         for player in players:
-            actions.append(player.act())
+            act1, act2 = player.act()
+            action = []
+            action.append(act1)
+            action.append(act2)
+            actions.append(action)
         # check switches first
         for i in range(len(actions)):
             action = actions[i]
@@ -69,14 +74,18 @@ def battle(team1, team2):
                     mon1 = players[i].currentMon
                     mon2 = players[1 - i].currentMon
                     if mon1 is not None:
-                        move = mon1.moves[action[1]]
+                        move = mon1.moves[action[1]].lower()
                         move_data = movedex[move]
+                        if mon1.item in ['Choice Band', 'Choice Specs', 'Choice Scarf']:
+                            mon1.applyStatus({'volatileStatus': 'encore'}, False)
+                            mon1.encoreTurns = -1
+                            mon1.encoredMove = action[1]
                         if prio == move_data['priority']:
-                            if move == 'AuroraVeil' and field.weather == 'hail':
+                            if move == 'auroraveil' and field.weather == 'hail':
                                 players[i].applySideEffect('auroraveil')
                             elif 'sideCondition' in move_data.keys():
                                 players[1 - i].applySideEffect(move_data['sideCondition'])
-                            mon1.applyEffect(move_data)
+                            mon1.applyEffect(move_data, player1.isMisty)
                             if mon2 is not None:
                                 hits = 1
                                 if 'multihit' in move_data.keys():
@@ -86,10 +95,13 @@ def battle(team1, team2):
                                 while j < hits and mon1 is not None and mon2 is not None:
                                     rand = random.randrange(85, 101, 1) / 100
                                     acc = random.randrange(0, 100, 1)
+                                    accuracy = move_data['accuracy']
+                                    if 'accuracyModifier' in move_data.keys():
+                                        accuracy = move_data['accuracyModifier'](field, mon1, mon2)
                                     # do nothing on miss
-                                    if acc < move_data['accuracy']:
+                                    if acc < accuracy:
                                         damage = dmg_calc.DamageCalc(mon1, mon2, move, field, rand)
-                                        surviveOneHit = mon2.surviveOneHit()
+                                        surviveOneHit = mon2.surviveOhko()
                                         # break sash on use
                                         if surviveOneHit and damage > mon2.maxHp and mon2.item == 'Focus Sash':
                                             mon2.item = None
@@ -103,10 +115,15 @@ def battle(team1, team2):
                                         if effect is not None:
                                             # status move or hit and not sheer force
                                             if move_data['category'] == 'Status' or (damage > 0 and not mon1.ignoreSecondary):
-                                                mon2.applyEffect(effect)
+                                                mon2.applyEffect(effect, player1.isMisty)
                                         if 'self' in move_data.keys() and damage > 0:
                                             self_effect = move_data['self']
-                                            mon1.applyEffect(self_effect)
+                                            mon1.applyEffect(self_effect, player1.isMisty)
+                                        if 'drain' in move_data.keys():
+                                            mon1.stats[0] += math.floor(damage * move_data['drain'][0] / move_data['drain'][1])
+                                        if 'recoil' in move_data.keys():
+                                            mon1.stats[0] -= math.floor(
+                                                damage * move_data['recoil'][0] / move_data['recoil'][1])
                                         if 'contact' in move_data['flags'].keys() and 'onRecieveHit' in abilitydex[mon2.ability].keys():
                                             mon1.applyEffect(abilitydex[mon2.ability]['onRecieveHit'])
                                         if move == 'KnockOff' and damage > 0:
@@ -119,7 +136,7 @@ def battle(team1, team2):
                                             mon1 = None
                                     j += 1
                                 if mon2 is not None and 'onActivate' in abilitydex[mon2.ability].keys():
-                                    abilitydex[mon2.ability]['onActivate'](move_data, mon2, mon1)
+                                    abilitydex[mon2.ability]['onActivate'](move_data, mon2)
         field.end_of_turn()
         hp1 = 0
         for mon in player1.team:
@@ -127,4 +144,5 @@ def battle(team1, team2):
         hp2 = 0
         for mon in player2.team:
             hp2 += mon.stats[0]
+        turns += 1
 

@@ -110,7 +110,7 @@ def loadAbilities():
     abilitydex['stormdrain']['onActivate'] = lambda move, user : user.applyBoost({'spa': 1}) if move['type'] == 'Water' else None
     abilitydex['waterabsorb']['onActivate'] = lambda move, user : user.applyHeal([1, 4]) if move['type'] == 'Water' else None
     abilitydex['dryskin']['onActivate'] = lambda move, user : user.applyHeal([1, 4]) if move['type'] == 'Water' else None
-    abilitydex['flashfire']['onActivate'] = lambda move, user : user.applyStatus({'volatileStatus' : 'flashfire'}) if move['type'] == 'Fire' else None
+    abilitydex['flashfire']['onActivate'] = lambda move, user : user.applyStatus({'volatileStatus' : 'flashfire'}, False) if move['type'] == 'Fire' else None
     abilitydex['sapsipper']['onActivate'] = lambda move, user : user.applyBoost({'atk': 1}) if move['type'] == 'Grass' else None
     abilitydex['windrider']['onActivate'] = lambda move, user : user.applyBoost({'atk': 1}) if move['flags']['wind'] == 1 else None
     abilitydex['windpower']['onActivate'] = lambda move, user : user.applyStatus({'volatileStatus' : 'charge'}) if move['flags']['wind'] == 1 else None
@@ -125,7 +125,7 @@ def loadAbilities():
     abilitydex['sheerforce']['onEntry'] = lambda state, user, opponent : user.ignoreSecondary == True
     abilitydex['infiltrator']['onEntry'] = lambda state, user, opponent : user.ignoreScreens == True
     abilitydex['moldbreaker']['onEntry'] = lambda state, user, opponent : user.ignoreAbilities == True
-    abilitydex['intimidate']['onEntry'] = lambda state, user, opponent : opponent.applyBoost({'atk': -1}) if opponent.ability['blockIntimidate'] is None else None
+    abilitydex['intimidate']['onEntry'] = lambda state, user, opponent : opponent.applyBoost({'atk': -1})
     abilitydex['magnetpull']['onEntry'] = lambda state, user, opponent : opponent.trapped == True if 'Steel' in opponent.types else False
     abilitydex['grassysurge']['onEntry'] = lambda state, user, opponent : state.setTerrain('grassyterrain', 8 if user.item == 'Terrain Extender' else 5)
     abilitydex['electricsurge']['onEntry'] = lambda state, user, opponent : state.setTerrain('electricterrain', 8 if user.item == 'Terrain Extender' else 5)
