@@ -226,4 +226,4 @@ class Player:
                         sum += move_data['boost'][stat]
                 return min(sum * 25.5, 99)
             return 0
-        return (1 / math.ceil(opponent.stats[0] / damage)) * 100
+        return (1 / max(1, math.ceil(opponent.stats[0] / damage))) * 100

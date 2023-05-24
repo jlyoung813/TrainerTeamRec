@@ -98,7 +98,7 @@ class Pokemon:
         return f"{self.name} @ {self.item}\nAbility: {self.ability}\n{self.nature} Nature"
 
     def copy(self):
-        return Pokemon(self.name, self.ability, self.moves, self.evs, self.ivs, self.nature, self.item)
+        return Pokemon(self.name, self.ability, self.moves, self.evs, self.ivs, self.nature, self.item, self.index)
 
     def removeItem(self):
         if self.item == None:

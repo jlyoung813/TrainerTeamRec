@@ -189,4 +189,5 @@ def battle(team1, team2):
         for mon in player2.team:
             hp2 += max(mon.stats[0], 0)
         turns += 1
+    return hp1 >= hp2
 
