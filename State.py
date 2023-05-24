@@ -98,9 +98,9 @@ class State:
                         
         for i in self.players:
             if i.currentMon is not None:
-                if i.currentMon.item != 'Leftovers':
+                if i.currentMon.item == 'Leftovers':
                     i.currentMon.applyHeal([1, 16], i.currentMon.maxHp)
-                if i.currentMon.item != 'Black Sludge':
+                if i.currentMon.item == 'Black Sludge':
                     if 'Poison' in i.currentMon.types:
                         i.currentMon.applyHeal([1, 16], i.currentMon.maxHp)
                     else:
@@ -127,8 +127,8 @@ class State:
                     if i.currentMon.ability != 'poisonheal':
                         if i.currentMon.applyChip([1, 8]):
                                 i.currentMon = None
-                        else:
-                            i.currentMon.applyHeal([1, 8], i.currentMon.maxHP)
+                    else:
+                        i.currentMon.applyHeal([1, 8], i.currentMon.maxHp)
                             
         for i in self.players:
             if i.currentMon is not None:
@@ -139,7 +139,7 @@ class State:
                         else:
                             i.currentMon.toxicMultiplier += 1
                     else:
-                            i.currentMon.applyHeal([1, 8], i.currentMon.maxHP)
+                        i.currentMon.applyHeal([1, 8], i.currentMon.maxHp)
                 
         for i in self.players:
             if i.currentMon is not None:

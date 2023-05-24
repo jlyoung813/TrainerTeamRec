@@ -148,14 +148,14 @@ class Pokemon:
     def applyStatus(self, status, isMisty):
         if 'status' in status.keys():
             if not (isMisty and self.grounded()):
-                if self.status is not None:
-                    if (status == 'psn' or status == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
+                if self.status is None:
+                    if (status['status'] == 'psn' or status['status'] == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
                         status = None
-                    if (status == 'brn') and ('Fire' in self.types):
+                    if (status['status'] == 'brn') and ('Fire' in self.types):
                         status = None
-                    if (status == 'par') and ('Electric' in self.types):
+                    if (status['status'] == 'par') and ('Electric' in self.types):
                         status = None
-                    if (status == 'frz') and ('Ice' in self.types):
+                    if (status['status'] == 'frz') and ('Ice' in self.types):
                         status = None
                     self.status = status['status']
         if 'volatileStatus' in status.keys():
