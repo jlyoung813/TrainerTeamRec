@@ -168,6 +168,12 @@ class State:
                     i.applyStatus('brn', self.terrain == 'mistyterrain')
                 if i.currentMon.item == 'Toxic Orb':
                     i.applyStatus('tox', self.terrain == 'mistyterrain')
+                if i.currentMon.status == 'slp' or 'frz':
+                    if i.currentMon.sleepTurns == 2:
+                        i.currentMon.status = None
+                        i.currentMon.sleepTurns = 0
+                    else:
+                        i.currentMon.sleepTurns += 1
 
             for j in range(len(i.screensCountdowns)):
                 if i.screensCountdowns[j] > 0:

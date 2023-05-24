@@ -84,6 +84,7 @@ class Pokemon:
         self.disableTurns = 0
         self.encoreTurns = 0
         self.partialTrapTurns = 0
+        self.sleepTurns = 0
         self.disabledMove = -1
         self.encoredMove = -1
         self.ignoreSecondary = False
@@ -107,7 +108,7 @@ class Pokemon:
 
     def applyEffect(self, effect, isMisty=False):
         chance = 101
-        if chance in effect.keys():
+        if 'chance' in effect.keys():
             chance = effect['chance']
         rand = random.randrange(0, 100, 1)
         if rand < chance:
@@ -149,15 +150,16 @@ class Pokemon:
         if 'status' in status.keys():
             if not (isMisty and self.grounded()):
                 if self.status is None:
-                    if (status['status'] == 'psn' or status['status'] == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
-                        status = None
-                    if (status['status'] == 'brn') and ('Fire' in self.types):
-                        status = None
-                    if (status['status'] == 'par') and ('Electric' in self.types):
-                        status = None
-                    if (status['status'] == 'frz') and ('Ice' in self.types):
-                        status = None
-                    self.status = status['status']
+                    cond = status['status']
+                    if (cond == 'psn' or status['status'] == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
+                        cond = None
+                    if (cond == 'brn') and ('Fire' in self.types):
+                        cond = None
+                    if (cond == 'par') and ('Electric' in self.types):
+                        cond = None
+                    if (cond == 'frz') and ('Ice' in self.types):
+                        cond = None
+                    self.status = cond
         if 'volatileStatus' in status.keys():
             if status['volatileStatus'] not in self.volatileStatus:
                 if status['volatileStatus'] == 'confusion':

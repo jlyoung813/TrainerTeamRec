@@ -78,12 +78,16 @@ def battle(team1, team2):
                 if action[0] == 'attack':
                     mon1 = players[i].currentMon
                     mon2 = players[1 - i].currentMon
+                    if mon1 is not None and 'flinch' in mon1.volatileStatus:
+                        print('flinched')
                     if mon1 is not None and 'flinch' not in mon1.volatileStatus:
                         move = mon1.moves[action[1]].lower()
                         move_data = movedex[move]
-                        chance = 100
+                        chance = 101
                         if mon1.status == 'par':
-                            chance = 25
+                            chance = 50
+                        if mon1.status == 'slp' or mon1.status == 'frz':
+                            chance = -1
                         full_para = random.randrange(0, 100, 1)
                         if prio == move_data['priority'] and full_para < chance:
                             if mon1.item in ['Choice Band', 'Choice Specs', 'Choice Scarf']:
