@@ -52,7 +52,9 @@ class State:
             ability = abilitydex[self.players[playerIdx].currentMon.ability]
             if 'onEntry' in ability.keys():
                 ability['onEntry'](self, self.players[playerIdx].currentMon, self.players[1-playerIdx].currentMon)
-    
+        else:
+            self.players[playerIdx].currentMon = None
+
     def end_of_turn(self):
     #lefties, weather, status, seeds
         self.weatherCount -= 1 if self.weatherCount > 0 else 0

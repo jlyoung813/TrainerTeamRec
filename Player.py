@@ -19,16 +19,17 @@ class Player:
       
     # incoming is the Pokemon object, may need to change ot index
     def switch(self, incomingIdx):
-        incoming = self.team[incomingIdx]
-        if incoming is None or incoming.stats[0] <= 0:
+        if self.team[incomingIdx].stats[0] <= 0:
             print("shouldnt try to switch to KOed Pokemon")
             return False
-        self.currentMon.volatileStatus = []
-        self.currentMon.statStages = [0, 0, 0, 0, 0]
-        ability = abilitydex[self.currentMon.ability]
-        if 'onExit' in ability.keys():
-            heal = ability['onExit']
-            self.currentMon.applyHeal(heal)
+        incoming = self.team[incomingIdx]
+        if self.currentMon is not None:
+            self.currentMon.volatileStatus = []
+            self.currentMon.statStages = [0, 0, 0, 0, 0]
+            ability = abilitydex[self.currentMon.ability]
+            if 'onExit' in ability.keys():
+                heal = ability['onExit']
+                self.currentMon.applyHeal(heal)
         self.applyHazardsDmg(self, incoming)
         self.currentMon = incoming
         if self.currentMon.stats[0] <= 0:
@@ -81,6 +82,7 @@ class Player:
     def defog(self):
         self.hazards = []
         self.screens = []
+        self.screensCountdowns = []
 
     def lead(self, other_player):
         return 0
