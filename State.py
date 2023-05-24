@@ -98,15 +98,9 @@ class State:
                         
         for i in self.players:
             if i.currentMon is not None:
-<<<<<<< HEAD
                 if i.currentMon.item != 'Leftovers':
                     i.currentMon.applyHeal([1, 16], i.currentMon.maxHP)
                 if i.currentMon.item != 'Black Sludge':
-=======
-                if i.currentMon.item == 'Leftovers':
-                    i.currentMon.applyHeal([1, 16])
-                if i.currentMon.item == 'Black Sludge':
->>>>>>> ef8ca15cf5e277a81eb36dc1f7628e1316d1d59f
                     if 'Poison' in i.currentMon.types:
                         i.currentMon.applyHeal([1, 16], i.currentMon.maxHP)
                     else:
