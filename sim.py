@@ -126,8 +126,9 @@ def battle(team1, team2):
                                                 damage * move_data['recoil'][0] / move_data['recoil'][1])
                                         if 'contact' in move_data['flags'].keys() and 'onRecieveHit' in abilitydex[mon2.ability].keys():
                                             mon1.applyEffect(abilitydex[mon2.ability]['onRecieveHit'])
-                                        if move == 'KnockOff' and damage > 0:
+                                        if move == 'knockoff' and damage > 0:
                                             mon2.item = None
+                                        print(f'{move} : {damage}, {mon2.stats[0]}, turn: {turns}')
                                         if mon2.stats[0] <= 0:
                                             players[1 - i].currentMon = None
                                             mon2 = None
