@@ -83,6 +83,7 @@ class Pokemon:
         self.tauntTurns = 0
         self.disableTurns = 0
         self.encoreTurns = 0
+        self.partialTrapTurns = 0
         self.disabledMove = -1
         self.encoredMove = -1
         self.ignoreSecondary = False
@@ -101,7 +102,7 @@ class Pokemon:
             return True
 
 
-    def applyEffect(self, effect):
+    def applyEffect(self, effect, isMisty=False):
         chance = 101
         if chance in effect.keys():
             chance = effect['chance']
@@ -112,7 +113,7 @@ class Pokemon:
             if 'heal' in effect.keys():
                 self.applyHeal(effect, self.maxHP)
             if 'status' in effect.keys():
-                self.applyStatus(effect['status'])
+                self.applyStatus(effect, isMisty)
             if 'chip' in effect.keys():
                 self.applyChip(effect['chip'])
 
@@ -142,7 +143,7 @@ class Pokemon:
 
     #misty terrain check moved here
     def applyStatus(self, status, isMisty):
-        if status['status'] is not None:
+        if 'status' in status.keys():
             if not (isMisty and self.grounded()):
                 if self.status is not None:
                     if (status == 'psn' or status == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
@@ -154,14 +155,16 @@ class Pokemon:
                     if (status == 'frz') and ('Ice' in self.types):
                         status = None
                     self.status = status['status']
-                    return status != None
-        if status['volatileStatus'] is not None:
+        if 'volatileStatus' in status.keys():
+            if status['volatileStatus'] not in self.volatileStatus:
+                if status['volatileStatus'] == 'confusion':
+                    pass
+        if 'volatileStatus' in status.keys():
             volatileStatus = status['volatileStatus']
             #lockedmove should behave as encore + partiallytrapped, so apply both seperately
             if volatileStatus == 'lockedmove':
                 self.applyStatus({'volatileStatus': 'encore'}, isMisty)
-                volatileStatus == 'partiallytrapped'
-                
+                self.applyStatus({'volatileStatus': 'partiallytrapped'}, isMisty)
             if volatileStatus not in self.volatileStatus:
                 if volatileStatus == 'confusion':
                     if isMisty and self.grounded():
@@ -171,7 +174,7 @@ class Pokemon:
                         status = None
                 self.volatileStatus.append(volatileStatus)
                 
-                if volatileStatus == 'taunt':
+                if self.volatileStatus == 'taunt':
                     self.tauntTurns = 3
                 if volatileStatus == 'disable':
                     self.disableTurns = 3
@@ -182,9 +185,6 @@ class Pokemon:
                 if volatileStatus == 'partiallytrapped':
                     self.partialTrapTurns = 3
                     self.trapped = True
-                return status != None
-        return False
-    
     def clearVolatile(self, volatileStatus):
         if volatileStatus == 'all':
             self.volatileStatus = []
@@ -206,13 +206,13 @@ class Pokemon:
             if volatileStatus == 'partiallytrapped':
                 self.partialTrapTurns = 0
                 self.trapped = False
-    
+
     #chip is going to encompass all % max hp damage. return True if the mon is Koed
     def applyChip(self, chip):
         if self.ability != 'magicguard':
-            return self.applyDamage(math.floor(self.maxHP * (chip[0] / chip[1])))
+            return self.applyDamage(math.floor(self.maxHp * (chip[0] / chip[1])))
         return False
-        
+
     def applyDamage(self, damage):
         self.stats[0] -= damage
         return self.stats[0] <= 0
@@ -220,7 +220,7 @@ class Pokemon:
     def grounded(self):
         return 'Flying' not in self.types and self.ability != 'levitate' and self.item != 'Air Balloon' and 'roost' not in self.volatileStatus
 
-    def surviveOneHit(self):
+    def surviveOhko(self):
         return self.maxHp == self.stats[0] and (self.item == 'Focus Sash' or self.ability == 'Sturdy')
 
 def stage(stage):

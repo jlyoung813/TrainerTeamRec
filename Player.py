@@ -24,7 +24,8 @@ class Player:
             return False
         incoming = self.team[incomingIdx]
         if self.currentMon is not None:
-            self.currentMon.volatileStatus = []
+            for volatileStatus in self.currentMon.volatileStatus:
+                self.currentMon.clearVolatile(volatileStatus)
             self.currentMon.statStages = [0, 0, 0, 0, 0]
             ability = abilitydex[self.currentMon.ability]
             if 'onExit' in ability.keys():
@@ -40,15 +41,15 @@ class Player:
     def applySideEffect(self, sideEffect):
         if sideEffect == 'reflect' and 'reflect' not in self.hazards:
             self.screens.append('reflect')
-            self.screensCountdown.append(8 if self.currentMon.item == 'Light Clay' else 5)
+            self.screensCountdowns.append(8 if self.currentMon.item == 'Light Clay' else 5)
             return True
         if sideEffect == 'lightscreen' and 'lightscreen' not in self.hazards:
             self.screens.append('lightscreen')
-            self.screensCountdown.append(8 if self.currentMon.item == 'Light Clay' else 5)
+            self.screensCountdowns.append(8 if self.currentMon.item == 'Light Clay' else 5)
             return True
         if sideEffect == 'auroraveil' and 'auroraveil' not in self.hazards:
             self.screens.append('auroraveil')
-            self.screensCountdown.append(8 if self.currentMon.item == 'Light Clay' else 5)
+            self.screensCountdowns.append(8 if self.currentMon.item == 'Light Clay' else 5)
             return True
         if sideEffect == 'stealthrock' and 'stealthrock' not in self.hazards:
             self.hazards.append('stealthrock')
@@ -90,3 +91,6 @@ class Player:
         return 0
         #pick mon to lead with based on other player team
         #need to write ai logic for this
+
+    def act(self):
+        return 'attack', 0
