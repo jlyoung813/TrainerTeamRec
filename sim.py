@@ -86,10 +86,17 @@ def battle(team1, team2):
                             mon1.encoreTurns = -1
                             mon1.encoredMove = action[1]
                         if prio == move_data['priority']:
+                            if move == 'defog':
+                                field.defog()
+                            if move == 'haze':
+                                field.haze()
                             if move == 'auroraveil' and field.weather == 'hail':
                                 players[i].applySideEffect('auroraveil')
                             elif 'sideCondition' in move_data.keys():
-                                players[1 - i].applySideEffect(move_data['sideCondition'])
+                                if move_data['target'] == 'foeSide':
+                                    players[i].applySideEffect(move_data['sideCondition'])
+                                else:
+                                    players[1 - i].applySideEffect(move_data['sideCondition'])
                             mon1.applyEffect(move_data, player1.isMisty)
                             if mon2 is not None:
                                 hits = 1

@@ -1,6 +1,8 @@
 import math
+import random
 from Player import Player
 from Pokemon import Pokemon
+from damage_calc import calc
 from load_data import loadPokemon, loadMoves, loadAbilities
 pokedex = loadPokemon()
 movedex = loadMoves()
@@ -48,13 +50,16 @@ class State:
             self.player1.currentMon.statStages = [0, 0, 0, 0, 0]
     
     def switch(self, playerIdx, incomingIdx):
+        ability = abilitydex[self.players[playerIdx].currentMon.ability]
+        if 'onEntry' in ability.keys():
+                ability['onExit'](self.players[playerIdx].currentMon)
         if self.players[playerIdx].switch(incomingIdx):
             ability = abilitydex[self.players[playerIdx].currentMon.ability]
             if 'onEntry' in ability.keys():
                 ability['onEntry'](self, self.players[playerIdx].currentMon, self.players[1-playerIdx].currentMon)
         else:
             self.players[playerIdx].currentMon = None
-
+                
     def end_of_turn(self):
     #lefties, weather, status, seeds
         self.weatherCount -= 1 if self.weatherCount > 0 else 0
@@ -89,15 +94,15 @@ class State:
                 if i.currentMon is not None:
                     if 'Flying' not in i.currentMon.types and \
                     i.currentMon.ability != 'levitate':
-                        i.currentMon.applyHeal([1, 16])
+                        i.currentMon.applyHeal([1, 16], i.currentMon.maxHP)
                         
         for i in self.players:
             if i.currentMon is not None:
-                if i.currentMon.item == 'Leftovers':
-                    i.currentMon.applyHeal([1, 16])
-                if i.currentMon.item == 'Black Sludge':
+                if i.currentMon.item != 'Leftovers':
+                    i.currentMon.applyHeal([1, 16], i.currentMon.maxHP)
+                if i.currentMon.item != 'Black Sludge':
                     if 'Poison' in i.currentMon.types:
-                        i.currentMon.applyHeal([1, 16])
+                        i.currentMon.applyHeal([1, 16], i.currentMon.maxHP)
                     else:
                         if i.currentMon.applyChip([1, 8]):
                             i.currentMon = None
@@ -108,7 +113,7 @@ class State:
                     if i.currentMon.applyChip([1, 8]):
                             i.currentMon = None
                     if [j for j in self.players if j != i] is not []:
-                        [j for j in self.players if j != i][0].applyHeal([1, 8])
+                        [j for j in self.players if j != i][0].applyHeal([1, 8], i.currentMon.maxHP)
                         
         for i in self.players:
             if i.currentMon is not None:
@@ -123,7 +128,7 @@ class State:
                         if i.currentMon.applyChip([1, 8]):
                                 i.currentMon = None
                         else:
-                            i.currentMon.applyHeal([1, 8])
+                            i.currentMon.applyHeal([1, 8], i.currentMon.maxHP)
                             
         for i in self.players:
             if i.currentMon is not None:
@@ -134,7 +139,7 @@ class State:
                         else:
                             i.currentMon.toxicMultiplier += 1
                     else:
-                            i.currentMon.applyHeal([1, 8])
+                            i.currentMon.applyHeal([1, 8], i.currentMon.maxHP)
                 
         for i in self.players:
             if i.currentMon is not None:

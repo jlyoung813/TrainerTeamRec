@@ -114,29 +114,35 @@ class Pokemon:
             if 'boosts' in effect.keys():
                 self.applyBoost(effect['boosts'])
             if 'heal' in effect.keys():
-                self.applyHeal(effect)
+                self.applyHeal(effect, self.maxHp)
             if 'status' in effect.keys():
                 self.applyStatus(effect, isMisty)
             if 'chip' in effect.keys():
                 self.applyChip(effect['chip'])
 
-    #this function should parse various effects(recoil, stat modifications, healing)
     def applyBoost(self, boost):
         if 'atk' in boost.keys() and (self.statStages[0] + boost['atk'] <= 6) and (self.statStages[0] + boost['atk'] >= -6):
             self.statStages[0] += boost['atk']
-        if 'def' in boost.keys() and (self.statStages[1] + boost['def'] <= 6) and (self.statStages[1] + boost['def'] >= -6):
+            return True
+        if 'def' in boost.keys() and (self.statStages[1] + boost['def'] <= 6) and (self.statStages[1] + boost['def'] >= 0):
             self.statStages[1] += boost['def']
-        if 'spa' in boost.keys() and (self.statStages[2] + boost['spa'] <= 6) and (self.statStages[2] + boost['spa'] >= -6):
+            return True
+        if 'spa' in boost.keys() and (self.statStages[2] + boost['spa'] <= 6) and (self.statStages[2] + boost['spa'] >= 0):
             self.statStages[2] += boost['spa']
-        if 'spd' in boost.keys() and (self.statStages[3] + boost['spd'] <= 6) and (self.statStages[3] + boost['spd'] >= -6):
+            return True
+        if 'spd' in boost.keys() and (self.statStages[3] + boost['spd'] <= 6) and (self.statStages[3] + boost['spd'] >= 0):
             self.statStages[3] += boost['spd']
-        if 'spe' in boost.keys() and (self.statStages[4] + boost['spe'] <= 6) and (self.statStages[4] + boost['spe'] >= -6):
+            return True
+        if 'spe' in boost.keys() and (self.statStages[4] + boost['spe'] <= 6) and (self.statStages[4] + boost['spe'] >= 0):
             self.statStages[4] += boost['spe']
+            return True
+        return False
 
-    def applyHeal(self, heal):
-        self.stats[0] += math.floor(self.maxHp * (heal[0] / heal[1]))
+    def applyHeal(self, heal, amount):
+        self.stats[0] += math.floor(amount * (heal[0] / heal[1]))
         if self.stats[0] > self.maxHp:
             self.stats[0] = self.maxHp
+        return True
 
     #misty terrain check moved here
     def applyStatus(self, status, isMisty):
@@ -167,7 +173,7 @@ class Pokemon:
                     if isMisty and self.grounded():
                         status = None
                         return False
-                if volatileStatus == 'leechseed':    
+                if volatileStatus == 'leechseed':
                     if 'Grass' in self.types:
                         status = None
                         return False
