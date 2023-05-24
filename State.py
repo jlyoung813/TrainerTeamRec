@@ -150,6 +150,10 @@ class State:
                     i.currentMon.encoreTurns -= 1
                     if i.currentMon.encoreTurns == 0:
                         i.currentMon.clearVolatile('encore') 
+                if i.currentMon.partialTrapTurns > 0:
+                    i.currentMon.partialTrapTurns -= 1
+                    if i.currentMon.partialTrapTurns == 0:
+                        i.currentMon.clearVolatile('partiallytrapped') 
                 if 'roosted' in i.currentMon.volatileStatus:
                     i.currentMon.clearVolatile('roost')
                 if i.currentMon.item == 'Flame Orb':
