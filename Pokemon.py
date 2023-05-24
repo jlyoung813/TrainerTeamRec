@@ -45,7 +45,7 @@ natures = {"Adamant": ["atk", "spa"],
 
 class Pokemon:
     def __init__(self, name, ability, moves, evs=[0, 0, 0, 0, 0, 0], ivs=[31, 31, 31, 31, 31, 31], nature="Hardy",
-                 item=""):
+                 item="", index=0):
         dex = pokedex.copy()
         self.name = name
         self.types = dex[name]["types"]
@@ -91,6 +91,8 @@ class Pokemon:
         self.surviveOneHit = False
         self.ignoreScreens = False
         self.ignoreAbilities = False
+
+        self.index = index
 
     def __str__(self):
         return f"{self.name} @ {self.item}\nAbility: {self.ability}\n{self.nature} Nature"
@@ -240,7 +242,7 @@ def stage(stage):
         numerator += stage
     return numerator / denominator
 
-def LoadSet(monSet):
+def LoadSet(monSet, index):
     line1 = monSet[0].split('@')
     name = line1[0].lower().strip().replace('-', '').replace(' ', '')
     item = line1[1].strip()
@@ -265,7 +267,7 @@ def LoadSet(monSet):
     moves = []
     for line in line5:
         moves.append(line.replace('-', '').replace(' ', ''))
-    mon = Pokemon(name, ability, moves, evs, nature=nature, item=item)
+    mon = Pokemon(name, ability, moves, evs, nature=nature, item=item, index=index)
     return mon
 
 
@@ -316,7 +318,7 @@ def BuildSets():
     for i in range(0, len(lines), 9):
         line = lines[i:i+8]
         sets = [line[0], line[1], line[2], line[3], line[4:]]
-        mon = LoadSet(sets)
+        mon = LoadSet(sets,len(mons))
         mons.append(mon)
     file.close()
     return mons
