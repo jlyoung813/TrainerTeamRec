@@ -139,8 +139,8 @@ class Pokemon:
             return True
         return False
 
-    def applyHeal(self, heal, amount):
-        self.stats[0] += math.floor(amount * (heal[0] / heal[1]))
+    def applyHeal(self, heal, amount=1):
+        self.stats[0] += math.floor(self.maxHp * (heal[0] / heal[1]))
         if self.stats[0] > self.maxHp:
             self.stats[0] = self.maxHp
         return True
@@ -151,7 +151,7 @@ class Pokemon:
             if not (isMisty and self.grounded()):
                 if self.status is None:
                     cond = status['status']
-                    if (cond == 'psn' or status['status'] == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
+                    if (cond == 'psn' or cond == 'tox') and ('Steel' in self.types or 'Poison' in self.types):
                         cond = None
                     if (cond == 'brn') and ('Fire' in self.types):
                         cond = None

@@ -40,23 +40,26 @@ class State:
         self.trickRoomCount = 0 if self.trickRoomCount > 0 else 5
     
     def defog(self):
-        self.player1.defog()
-        self.player2.defog()
+        self.players[0].defog()
+        self.players[1].defog()
         self.terrain = None
         self.terrainCount = 0
 
     def haze(self):
         for p in self.players:
-            self.player1.currentMon.statStages = [0, 0, 0, 0, 0]
+            p.currentMon.statStages = [0, 0, 0, 0, 0]
     
     def switch(self, playerIdx, incomingIdx):
-        ability = abilitydex[self.players[playerIdx].currentMon.ability]
-        if 'onEntry' in ability.keys():
-                ability['onExit'](self.players[playerIdx].currentMon)
+        if self.players[playerIdx].currentMon is not None:
+            ability = abilitydex[self.players[playerIdx].currentMon.ability]
+            if 'onExit' in ability.keys():
+                self.players[playerIdx].currentMon.applyHeal(ability['onExit'], self.players[playerIdx].currentMon.maxHp)
         if self.players[playerIdx].switch(incomingIdx):
             ability = abilitydex[self.players[playerIdx].currentMon.ability]
             if 'onEntry' in ability.keys():
-                ability['onEntry'](self, self.players[playerIdx].currentMon, self.players[1-playerIdx].currentMon)
+                abi = self.players[playerIdx].currentMon.ability
+                if abi != 'intimidate' and abi != 'magnetpull' or self.players[1-playerIdx].currentMon is not None:
+                    ability['onEntry'](self, self.players[playerIdx].currentMon, self.players[1-playerIdx].currentMon)
         else:
             self.players[playerIdx].currentMon = None
                 

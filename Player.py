@@ -31,8 +31,8 @@ class Player:
             ability = abilitydex[self.currentMon.ability]
             if 'onExit' in ability.keys():
                 heal = ability['onExit']
-                self.currentMon.applyHeal(heal)
-        self.applyHazardsDmg(self, incoming)
+                self.currentMon.applyHeal(heal, self.currentMon.maxHp)
+        self.applyHazardsDmg(incoming)
         self.currentMon = incoming
         if self.currentMon.stats[0] <= 0:
             # this is reached if a Pokemon is KOed to hazards, only return false so switchin effects arent applied
@@ -67,7 +67,10 @@ class Player:
         if incoming.item == "Heavy-Duty Boots":
             return False
         if 'stealthrock' in self.hazards:
-            incoming.applyChip([(math.prod(typeChart[t.lower()]["damageTaken"]['Rock']) for t in incoming.types), 8])
+            weak = 1
+            for t in incoming.types:
+                weak *= typeChart[t.lower()]['damageTaken']['Rock']
+            incoming.applyChip([weak, 8])
         if 'spikes' in self.hazards:
             if incoming.grounded():
                 damage = [1, 8]
@@ -75,7 +78,7 @@ class Player:
                     damage = [1, 6]
                 elif self.hazards.count('spikes') == 3:
                     damage = [1, 4]
-            incoming.applyChip(damage)
+                incoming.applyChip(damage)
         if 'toxicspikes' in self.hazards:
             if 'Flying' not in incoming.types and incoming.ability != 'Levitate':
                 if 'Poison' not in incoming.types:
@@ -96,23 +99,76 @@ class Player:
     def act(self, field, opponent):
         max_self = 0
         max_self_idx = 0
-        moves = self.currentMon.moves
-        if 'encore' in self.currentMon.volatileStatus:
-            moves = [self.currentMon.moves[self.currentMon.encoredMove]]
-        if 'taunt' in self.currentMon.volatileStatus:
-            for move in moves:
-                move_data = movedex[move.lower()]
-                if move_data['category'] == 'Status':
-                    moves.pop(move)
-        for i, move in enumerate(self.currentMon.moves):
-            score = self.evaluate_move(self.currentMon, opponent, move.lower(), field)
-            if score > max_self:
-                max_self = score
-                max_self_idx = i
+        if self.currentMon is not None and opponent:
+            moves = self.currentMon.moves
+            if 'encore' in self.currentMon.volatileStatus:
+                moves = [self.currentMon.moves[self.currentMon.encoredMove]]
+            if 'taunt' in self.currentMon.volatileStatus:
+                for move in moves:
+                    move_data = movedex[move.lower()]
+                    if move_data['category'] == 'Status':
+                        moves.pop(move)
+            for i, move in enumerate(moves):
+                score = self.evaluate_move(self.currentMon, opponent, move.lower(), field)
+                if score > max_self:
+                    max_self = score
+                    max_self_idx = i
+        max_opp = 0
+        if opponent is not None:
+            moves = opponent.moves
+            if 'encore' in opponent.volatileStatus:
+                moves = [opponent.moves[opponent.encoredMove]]
+            if 'taunt' in opponent.volatileStatus:
+                for move in moves:
+                    move_data = movedex[move.lower()]
+                    if move_data['category'] == 'Status':
+                        moves.pop(move)
+            for i, move in enumerate(moves):
+                score = self.evaluate_move(opponent, self.currentMon, move.lower(), field)
+                if score > max_self:
+                    max_opp = score
+        max_self = max_self / max(max_opp, 1)
+        max_switch, max_switch_idx = self.evaluate_switches(field, opponent)
+        if max_switch > max_self:
+            return 'switch', max_switch_idx
         return 'attack', max_self_idx
 
+    def evaluate_switches(self, field, opponent):
+        max_switch = -1
+        max_self_idx = 0
+        for i, mon in enumerate(self.team):
+            if mon.stats[0] > 0 and (self.currentMon is None or mon.name != self.currentMon.name):
+                moves = mon.moves
+                max_self = 0
+                for move in moves:
+                    score = self.evaluate_move(mon, opponent, move.lower(), field)
+                    if score > max_self:
+                        max_self = score
+                max_opp = 0
+                if opponent is not None:
+                    moves = opponent.moves
+                    if 'encore' in opponent.volatileStatus:
+                        moves = [opponent.moves[opponent.encoredMove]]
+                    if 'taunt' in opponent.volatileStatus:
+                        for move in moves:
+                            move_data = movedex[move.lower()]
+                            if move_data['category'] == 'Status':
+                                moves.pop(move)
+                    for move in moves:
+                        score = self.evaluate_move(opponent, mon, move.lower(), field)
+                        if score > max_self:
+                            max_opp = score
+                max_self = max_self / max(max_opp, 1)
+                if max_self > max_switch:
+                    max_switch = max_self
+                    max_self_idx = i
+        return max_switch, max_self_idx
+
+
     def evaluate_move(self, mon, opponent, move, field):
-        damage = dmg_calc.DamageCalc(mon, opponent, move, field, 0.92)
+        damage = 0
+        if opponent is not None:
+            damage = dmg_calc.DamageCalc(mon, opponent, move, field, 0.92)
         if damage == 0:
             move_data = movedex[move]
             accuracy = move_data['accuracy'] / 100
@@ -154,7 +210,6 @@ class Player:
                     count_phys = 0
                     for m in opponent.moves:
                         count_phys += movedex[m.lower()]['category'] == 'Physical'
-                    print(accuracy)
                     return (12 * count_phys * 'Fire' not in opponent.types) * accuracy
                 if move_data['status'] == 'slp':
                     return 51 * (not (self.isMisty or field.terrain == 'electricterrain')) * accuracy
