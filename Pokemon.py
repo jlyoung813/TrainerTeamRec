@@ -83,6 +83,7 @@ class Pokemon:
         self.tauntTurns = 0
         self.disableTurns = 0
         self.encoreTurns = 0
+        self.partialTrapTurns = 0
         self.disabledMove = -1
         self.encoredMove = -1
         self.ignoreSecondary = False
@@ -151,13 +152,13 @@ class Pokemon:
         if 'volatileStatus' in status.keys():
             if status['volatileStatus'] not in self.volatileStatus:
                 if status['volatileStatus'] == 'confusion':
+                    pass
         if 'volatileStatus' in status.keys():
             volatileStatus = status['volatileStatus']
             #lockedmove should behave as encore + partiallytrapped, so apply both seperately
             if volatileStatus == 'lockedmove':
                 self.applyStatus({'volatileStatus': 'encore'}, isMisty)
-                volatileStatus == 'partiallytrapped'
-
+                self.applyStatus({'volatileStatus': 'partiallytrapped'}, isMisty)
             if volatileStatus not in self.volatileStatus:
                 if volatileStatus == 'confusion':
                     if isMisty and self.grounded():
@@ -204,7 +205,7 @@ class Pokemon:
     #chip is going to encompass all % max hp damage. return True if the mon is Koed
     def applyChip(self, chip):
         if self.ability != 'magicguard':
-            return self.applyDamage(math.floor(self.maxHP * (chip[0] / chip[1])))
+            return self.applyDamage(math.floor(self.maxHp * (chip[0] / chip[1])))
         return False
 
     def applyDamage(self, damage):

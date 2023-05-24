@@ -24,7 +24,8 @@ class Player:
             return False
         incoming = self.team[incomingIdx]
         if self.currentMon is not None:
-            self.currentMon.volatileStatus = []
+            for volatileStatus in self.currentMon.volatileStatus:
+                self.currentMon.clearVolatile(volatileStatus)
             self.currentMon.statStages = [0, 0, 0, 0, 0]
             ability = abilitydex[self.currentMon.ability]
             if 'onExit' in ability.keys():
