@@ -126,19 +126,14 @@ class Pokemon:
     def applyBoost(self, boost):
         if 'atk' in boost.keys() and (self.statStages[0] + boost['atk'] <= 6) and (self.statStages[0] + boost['atk'] >= -6):
             self.statStages[0] += boost['atk']
-            return True
-        if 'def' in boost.keys() and (self.statStages[1] + boost['def'] <= 6) and (self.statStages[1] + boost['def'] >= 0):
+        if 'def' in boost.keys() and (self.statStages[1] + boost['def'] <= 6) and (self.statStages[1] + boost['def'] >= -6):
             self.statStages[1] += boost['def']
-            return True
-        if 'spa' in boost.keys() and (self.statStages[2] + boost['spa'] <= 6) and (self.statStages[2] + boost['spa'] >= 0):
+        if 'spa' in boost.keys() and (self.statStages[2] + boost['spa'] <= 6) and (self.statStages[2] + boost['spa'] >= -6):
             self.statStages[2] += boost['spa']
-            return True
-        if 'spd' in boost.keys() and (self.statStages[3] + boost['spd'] <= 6) and (self.statStages[3] + boost['spd'] >= 0):
+        if 'spd' in boost.keys() and (self.statStages[3] + boost['spd'] <= 6) and (self.statStages[3] + boost['spd'] >= -6):
             self.statStages[3] += boost['spd']
-            return True
-        if 'spe' in boost.keys() and (self.statStages[4] + boost['spe'] <= 6) and (self.statStages[4] + boost['spe'] >= 0):
+        if 'spe' in boost.keys() and (self.statStages[4] + boost['spe'] <= 6) and (self.statStages[4] + boost['spe'] >= -6):
             self.statStages[4] += boost['spe']
-            return True
         return False
 
     def applyHeal(self, heal, amount=1):

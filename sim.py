@@ -84,7 +84,7 @@ def battle(team1, team2):
                 if action[0] == 'switch':
                     # field switch applies switch in effects appropriately
                     field.switch(players[i].id, action[1])
-                    print(f'{players[i].currentMon}, turn: {turns}, slot: {action[1]}')
+                    # print(f'{players[i].currentMon}, turn: {turns}, slot: {action[1]}')
             for prio in range(6, -6, -1):
                 for i in range(len(actions)):
                     action = actions[i]
@@ -169,7 +169,7 @@ def battle(team1, team2):
                                                 mon1.applyEffect(abilitydex[mon2.ability]['onRecieveHit'])
                                             if move == 'knockoff' and damage > 0:
                                                 mon2.item = None
-                                            print(f'{mon1.name}, {move} : {damage}, {mon2.stats[0]}, turn: {turns}, {players[i].id}')
+                                            # print(f'{mon1.name}, {move} : {damage}, {mon2.stats[0]}, turn: {turns}, {players[i].id}')
                                             if mon2.stats[0] <= 0:
                                                 players[1 - i].currentMon = None
                                                 mon2 = None
@@ -177,7 +177,7 @@ def battle(team1, team2):
                                                 players[i].currentMon = None
                                                 mon1 = None
                                         else:
-                                            print(f'{mon1.name}, {move} : missed, turn: {turns}, {players[i].id}')
+                                            pass#print(f'{mon1.name}, {move} : missed, turn: {turns}, {players[i].id}')
                                         j += 1
                                     if mon2 is not None and 'onActivate' in abilitydex[mon2.ability].keys():
                                         abilitydex[mon2.ability]['onActivate'](move_data, mon2)
