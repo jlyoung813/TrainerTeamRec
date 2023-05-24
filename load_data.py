@@ -104,22 +104,22 @@ def loadAbilities():
     abilitydex['sturdy']['incomingModifier'] = lambda move, user : 0 if 'ohko' in move.keys() else 1 #not sure how ohko moves are calced, may move this
     abilitydex['multiscale']['incomingModifier'] = lambda move, user : 0.5 if user.stats[0] == user.maxHp else 1
     
-    abilitydex['eartheater']['onActivate'] = lambda move, user : user.applyHeal([1, 4]) if move['type'] == 'Ground' else None
-    abilitydex['voltabsorb']['onActivate'] = lambda move, user : user.applyHeal([1, 4]) if move['type'] == 'Electric' else None
+    abilitydex['eartheater']['onActivate'] = lambda move, user : user.applyHeal([1, 4], user.maxHP) if move['type'] == 'Ground' else None
+    abilitydex['voltabsorb']['onActivate'] = lambda move, user : user.applyHeal([1, 4], user.maxHP) if move['type'] == 'Electric' else None
     abilitydex['motordrive']['onActivate'] = lambda move, user : user.applyBoost({'spe': 1}) if move['type'] == 'Electric' else None
     abilitydex['stormdrain']['onActivate'] = lambda move, user : user.applyBoost({'spa': 1}) if move['type'] == 'Water' else None
-    abilitydex['waterabsorb']['onActivate'] = lambda move, user : user.applyHeal([1, 4]) if move['type'] == 'Water' else None
-    abilitydex['dryskin']['onActivate'] = lambda move, user : user.applyHeal([1, 4]) if move['type'] == 'Water' else None
+    abilitydex['waterabsorb']['onActivate'] = lambda move, user : user.applyHeal([1, 4], user.maxHP) if move['type'] == 'Water' else None
+    abilitydex['dryskin']['onActivate'] = lambda move, user : user.applyHeal([1, 4], user.maxHP) if move['type'] == 'Water' else None
     abilitydex['flashfire']['onActivate'] = lambda move, user : user.applyStatus({'volatileStatus' : 'flashfire'}) if move['type'] == 'Fire' else None
     abilitydex['sapsipper']['onActivate'] = lambda move, user : user.applyBoost({'atk': 1}) if move['type'] == 'Grass' else None
     abilitydex['windrider']['onActivate'] = lambda move, user : user.applyBoost({'atk': 1}) if move['flags']['wind'] == 1 else None
     abilitydex['windpower']['onActivate'] = lambda move, user : user.applyStatus({'volatileStatus' : 'charge'}) if move['flags']['wind'] == 1 else None
     
     # #recoil moves need some way to deal the recoil to the attacker. probably just logic at end of attack
-    abilitydex['ironbarbs']['onRecieveHit'] = {'chance' : 100, 'chip' : [1, 8]}
-    abilitydex['roughskin']['onRecieveHit'] = {'chance' : 100, 'chip' : [1, 8]}
-    abilitydex['static']['onRecieveHit'] = {'chance' : 30, 'status' : 'par'}
-    abilitydex['flamebody']['onRecieveHit'] = {'chance' : 30, 'status' : 'brn'}
+    abilitydex['ironbarbs']['onRecieveHit'] = lambda move : {'chance' : 100, 'chip' : [1, 8]} if 'contact' in move['flags'].keys() else None
+    abilitydex['roughskin']['onRecieveHit'] = lambda move : {'chance' : 100, 'chip' : [1, 8]} if 'contact' in move['flags'].keys() else None
+    abilitydex['static']['onRecieveHit'] = lambda move : {'chance' : 30, 'status' : 'par'} if 'contact' in move['flags'].keys() else None
+    abilitydex['flamebody']['onRecieveHit'] = lambda move : {'chance' : 30, 'status' : 'brn'} if 'contact' in move['flags'].keys() else None
     
     #logic for these properties should be included in the pokemon objects themselves and checked as needed
     abilitydex['sheerforce']['onEntry'] = lambda state, user, opponent : user.ignoreSecondary == True
@@ -139,11 +139,11 @@ def loadAbilities():
     abilitydex['speedboost']['onTurnEnd'] = lambda user : user.applyBoost({'spe': 1})
     abilitydex['sturdy']['onTurnEnd'] = lambda user : user.setSurviveOneHit(True) if user.stats.hp == user.stats.maxHp else user.setSurviveOneHit(False)
     
-    abilitydex['regenerator']['onExit'] = {'heal' : [1, 3]} #this might be moved to a different property
+    abilitydex['regenerator']['onExit'] = lambda user: user.applyHeal({'heal' : [1, 3]}, user.maxHP) #this might be moved to a different property
     
-    abilitydex['moxie']['onKO'] = lambda user : {'boosts' : {'atk': 1}}
-    abilitydex['chillingneigh']['onKO'] = lambda user : {'boosts' : {'atk': 1}}
-    abilitydex['grimneigh']['onKO'] = lambda user : {'boosts' : {'spa': 1}}
-    abilitydex['beastboost']['onKO'] = lambda user : {'boosts' : {user.highestStat() : 1}}
+    abilitydex['moxie']['onKO'] = lambda user : user.applyBoost({'boosts' : {'atk': 1}})
+    abilitydex['chillingneigh']['onKO'] = lambda user : user.applyBoost({'boosts' : {'atk': 1}})
+    abilitydex['grimneigh']['onKO'] = lambda user : user.applyBoost({'boosts' : {'spa': 1}})
+    abilitydex['beastboost']['onKO'] = lambda user : user.applyBoost({'boosts' : {user.highestStat() : 1}})
 
     return abilitydex

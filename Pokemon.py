@@ -110,29 +110,35 @@ class Pokemon:
             if 'boosts' in effect.keys():
                 self.applyBoost(effect['boosts'])
             if 'heal' in effect.keys():
-                self.applyHeal(effect)
+                self.applyHeal(effect, self.maxHP)
             if 'status' in effect.keys():
                 self.applyStatus(effect['status'])
             if 'chip' in effect.keys():
                 self.applyChip(effect['chip'])
 
-    #this function should parse various effects(recoil, stat modifications, healing)
     def applyBoost(self, boost):
         if 'atk' in boost and (self.statStages[0] + boost['atk'] <= 6) and (self.statStages[0] + boost['atk'] >= 0):
             self.statStages[0] += boost['atk']
+            return True
         if 'def' in boost and (self.statStages[1] + boost['def'] <= 6) and (self.statStages[1] + boost['def'] >= 0):
             self.statStages[1] += boost['def']
+            return True
         if 'spa' in boost and (self.statStages[2] + boost['spa'] <= 6) and (self.statStages[2] + boost['spa'] >= 0):
             self.statStages[2] += boost['spa']
+            return True
         if 'spd' in boost and (self.statStages[3] + boost['spd'] <= 6) and (self.statStages[3] + boost['spd'] >= 0):
             self.statStages[3] += boost['spd']
+            return True
         if 'spe' in boost and (self.statStages[4] + boost['spe'] <= 6) and (self.statStages[4] + boost['spe'] >= 0):
             self.statStages[4] += boost['spe']
+            return True
+        return False
 
-    def applyHeal(self, heal):
-        self.stats[0] += math.floor(self.maxHP * (heal[0] / heal[1]))
+    def applyHeal(self, heal, amount):
+        self.stats[0] += math.floor(amount * (heal[0] / heal[1]))
         if self.stats[0] > self.maxHP:
             self.stats[0] = self.maxHP
+        return True
 
     #misty terrain check moved here
     def applyStatus(self, status, isMisty):
@@ -148,6 +154,7 @@ class Pokemon:
                     if (status == 'frz') and ('Ice' in self.types):
                         status = None
                     self.status = status['status']
+                    return status != None
         if status['volatileStatus'] is not None:
             volatileStatus = status['volatileStatus']
             #lockedmove should behave as encore + partiallytrapped, so apply both seperately
@@ -175,6 +182,8 @@ class Pokemon:
                 if volatileStatus == 'partiallytrapped':
                     self.partialTrapTurns = 3
                     self.trapped = True
+                return status != None
+        return False
     
     def clearVolatile(self, volatileStatus):
         if volatileStatus == 'all':
