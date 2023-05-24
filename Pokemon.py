@@ -94,6 +94,9 @@ class Pokemon:
     def __str__(self):
         return f"{self.name} @ {self.item}\nAbility: {self.ability}\n{self.nature} Nature"
 
+    def copy(self):
+        return Pokemon(self.name, self.ability, self.moves, self.evs, self.ivs, self.nature, self.item)
+
     def removeItem(self):
         if self.item == None:
             return False
@@ -119,15 +122,15 @@ class Pokemon:
 
     #this function should parse various effects(recoil, stat modifications, healing)
     def applyBoost(self, boost):
-        if 'atk' in boost and (self.statStages[0] + boost['atk'] <= 6) and (self.statStages[0] + boost['atk'] >= 0):
+        if 'atk' in boost.keys() and (self.statStages[0] + boost['atk'] <= 6) and (self.statStages[0] + boost['atk'] >= -6):
             self.statStages[0] += boost['atk']
-        if 'def' in boost and (self.statStages[1] + boost['def'] <= 6) and (self.statStages[1] + boost['def'] >= 0):
+        if 'def' in boost.keys() and (self.statStages[1] + boost['def'] <= 6) and (self.statStages[1] + boost['def'] >= -6):
             self.statStages[1] += boost['def']
-        if 'spa' in boost and (self.statStages[2] + boost['spa'] <= 6) and (self.statStages[2] + boost['spa'] >= 0):
+        if 'spa' in boost.keys() and (self.statStages[2] + boost['spa'] <= 6) and (self.statStages[2] + boost['spa'] >= -6):
             self.statStages[2] += boost['spa']
-        if 'spd' in boost and (self.statStages[3] + boost['spd'] <= 6) and (self.statStages[3] + boost['spd'] >= 0):
+        if 'spd' in boost.keys() and (self.statStages[3] + boost['spd'] <= 6) and (self.statStages[3] + boost['spd'] >= -6):
             self.statStages[3] += boost['spd']
-        if 'spe' in boost and (self.statStages[4] + boost['spe'] <= 6) and (self.statStages[4] + boost['spe'] >= 0):
+        if 'spe' in boost.keys() and (self.statStages[4] + boost['spe'] <= 6) and (self.statStages[4] + boost['spe'] >= -6):
             self.statStages[4] += boost['spe']
 
     def applyHeal(self, heal):
@@ -163,12 +166,14 @@ class Pokemon:
                 if volatileStatus == 'confusion':
                     if isMisty and self.grounded():
                         status = None
+                        return False
                 if volatileStatus == 'leechseed':    
                     if 'Grass' in self.types:
                         status = None
+                        return False
                 self.volatileStatus.append(volatileStatus)
                 
-                if self.volatileStatus == 'taunt':
+                if volatileStatus == 'taunt':
                     self.tauntTurns = 3
                 if volatileStatus == 'disable':
                     self.disableTurns = 3

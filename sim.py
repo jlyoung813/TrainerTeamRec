@@ -44,9 +44,13 @@ def battle(team1, team2):
     while hp1 > 0 and hp2 > 0 and turns < 1000:
         # calc speed order
         speed1 = math.floor(player1.currentMon.stats[5] * Pokemon.stage(player1.currentMon.statStages[4]))
+        if player1.currentMon.item == 'Choice Scarf':
+            speed1 *= 1.5
         if player1.currentMon.status == 'par':
             speed1 = speed1 // 2
         speed2 = math.floor(player2.currentMon.stats[5] * Pokemon.stage(player2.currentMon.statStages[4]))
+        if player2.currentMon.item == 'Choice Scarf':
+            speed2 *= 1.5
         if player2.currentMon.status == 'par':
             speed2 = speed1 // 2
         # if speed tied player 1 goes first
@@ -55,8 +59,9 @@ def battle(team1, team2):
         else:
             players = [player2, player1]
         actions = []
-        for player in players:
-            act1, act2 = player.act()
+        for p in range(len(players)):
+            player = players[p]
+            act1, act2 = player.act(field, players[1-p].currentMon)
             action = []
             action.append(act1)
             action.append(act2)
@@ -111,7 +116,9 @@ def battle(team1, team2):
                                         if damage > 0 and mon2.item == 'Air Balloon':
                                             mon2.item = None
                                         mon2.stats[0] -= damage
-                                        effect = move_data['secondary']
+                                        effect = None
+                                        if 'secondary' in move_data.keys():
+                                            effect = move_data['secondary']
                                         if effect is not None:
                                             # status move or hit and not sheer force
                                             if move_data['category'] == 'Status' or (damage > 0 and not mon1.ignoreSecondary):
@@ -121,6 +128,7 @@ def battle(team1, team2):
                                             mon1.applyEffect(self_effect, player1.isMisty)
                                         if 'drain' in move_data.keys():
                                             mon1.stats[0] += math.floor(damage * move_data['drain'][0] / move_data['drain'][1])
+                                            mon1.stats[0] = min(mon1.stats[0], mon1.maxHp)
                                         if 'recoil' in move_data.keys():
                                             mon1.stats[0] -= math.floor(
                                                 damage * move_data['recoil'][0] / move_data['recoil'][1])

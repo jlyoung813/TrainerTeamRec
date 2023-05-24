@@ -426,9 +426,9 @@ class calc:
 		choice = 1
 		if moves[move]["category"] == "Physical":
 			attack = mon1.stats[1]
-			atk_stage = Pokemon.stage(mon1.statStages[1])
+			atk_stage = Pokemon.stage(mon1.statStages[0])
 			defense = mon2.stats[2]
-			def_stage = Pokemon.stage(mon2.statStages[2])
+			def_stage = Pokemon.stage(mon2.statStages[1])
 			if mon1.item == "Choice Band":
 				choice = 1.5
 			if mon1.status == 'brn':
@@ -436,9 +436,9 @@ class calc:
 
 		if moves[move]["category"] == "Special":
 			attack = mon1.stats[3]
-			atk_stage = Pokemon.stage(mon1.statStages[3])
+			atk_stage = Pokemon.stage(mon1.statStages[2])
 			defense = mon2.stats[4]
-			def_stage = Pokemon.stage(mon2.statStages[4])
+			def_stage = Pokemon.stage(mon2.statStages[3])
 			if mon1.item == "Choice Specs":
 				choice = 1.5
 			if mon2.item == "Assault Vest":
@@ -478,7 +478,7 @@ class calc:
 				power *= 1.3
 			if field.terrain == "mistyterrain" and move_type == 'Dragon':
 				power *= 0.5
-		damage = math.floor((((2*100)/5+2) * power * (attack * choice / defense))/50+2)
+		damage = math.floor((((2 * 100) / 5 + 2) * power * (attack * choice / defense)) / 50 + 2)
 		if move_type == "Ground" and mon2.item == "Air Balloon":
 			return 0
 		if mon1.types.count(move_type) > 0:
@@ -498,3 +498,6 @@ class calc:
 			ability2 = abilities[mon2.ability]["incomingModifier"](moves[move], mon2)
 		damage *= lorb * ability1 * ability2 * burn * weather
 		return math.floor(damage * random)
+
+
+

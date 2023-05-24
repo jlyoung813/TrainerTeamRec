@@ -1,11 +1,13 @@
 
 from Pokemon import Pokemon
+import damage_calc
 from damage_calc import typeChart
 import math
 from load_data import loadPokemon, loadMoves, loadAbilities
 pokedex = loadPokemon()
 movedex = loadMoves()
 abilitydex = loadAbilities()
+dmg_calc = damage_calc.calc()
 
 class Player:
     def __init__(self, id, team=[Pokemon]):
@@ -24,8 +26,7 @@ class Player:
             return False
         incoming = self.team[incomingIdx]
         if self.currentMon is not None:
-            for volatileStatus in self.currentMon.volatileStatus:
-                self.currentMon.clearVolatile(volatileStatus)
+            self.currentMon.clearVolatile('all')
             self.currentMon.statStages = [0, 0, 0, 0, 0]
             ability = abilitydex[self.currentMon.ability]
             if 'onExit' in ability.keys():
@@ -39,15 +40,15 @@ class Player:
         return True
     
     def applySideEffect(self, sideEffect):
-        if sideEffect == 'reflect' and 'reflect' not in self.hazards:
+        if sideEffect == 'reflect' and 'reflect' not in self.screens:
             self.screens.append('reflect')
             self.screensCountdowns.append(8 if self.currentMon.item == 'Light Clay' else 5)
             return True
-        if sideEffect == 'lightscreen' and 'lightscreen' not in self.hazards:
+        if sideEffect == 'lightscreen' and 'lightscreen' not in self.screens:
             self.screens.append('lightscreen')
             self.screensCountdowns.append(8 if self.currentMon.item == 'Light Clay' else 5)
             return True
-        if sideEffect == 'auroraveil' and 'auroraveil' not in self.hazards:
+        if sideEffect == 'auroraveil' and 'auroraveil' not in self.screens:
             self.screens.append('auroraveil')
             self.screensCountdowns.append(8 if self.currentMon.item == 'Light Clay' else 5)
             return True
@@ -92,5 +93,26 @@ class Player:
         #pick mon to lead with based on other player team
         #need to write ai logic for this
 
-    def act(self):
-        return 'attack', 0
+    def act(self, field, opponent):
+        max_self = 0
+        max_self_idx = 0
+        moves = self.currentMon.moves
+        if 'encore' in self.currentMon.volatileStatus:
+            moves = [self.currentMon.moves[self.currentMon.encoredMove]]
+        if 'taunt' in self.currentMon.volatileStatus:
+            for move in moves:
+                move_data = movedex[move.lower()]
+                if move_data['category'] == 'Status':
+                    moves.pop(move)
+        for i, move in enumerate(self.currentMon.moves):
+            score = self.evaluate_move(self.currentMon, opponent, move.lower(), field)
+            if score > max_self:
+                max_self = score
+                max_self_idx = i
+        return 'attack', max_self_idx
+
+    def evaluate_move(self, mon, opponent, move, field):
+        damage = dmg_calc.DamageCalc(mon, opponent, move, field, 0.92)
+        if damage == 0:
+            return 0
+        return (1 / math.ceil(opponent.stats[0] / damage)) * 100
