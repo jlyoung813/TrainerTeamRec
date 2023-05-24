@@ -149,22 +149,32 @@ class Pokemon:
                         status = None
                     self.status = status['status']
         if status['volatileStatus'] is not None:
-            if status['volatileStatus'] not in self.volatileStatus:
-                if status['volatileStatus'] == 'confusion':
+            volatileStatus = status['volatileStatus']
+            #lockedmove should behave as encore + partiallytrapped, so apply both seperately
+            if volatileStatus == 'lockedmove':
+                self.applyStatus({'volatileStatus': 'encore'}, isMisty)
+                volatileStatus == 'partiallytrapped'
+                
+            if volatileStatus not in self.volatileStatus:
+                if volatileStatus == 'confusion':
                     if isMisty and self.grounded():
                         status = None
-                if status['volatileStatus'] == 'leechseed':    
+                if volatileStatus == 'leechseed':    
                     if 'Grass' in self.types:
                         status = None
-                self.volatileStatus.append(status['volatileStatus'])
-                if status['volatileStatus'] == 'taunt':
+                self.volatileStatus.append(volatileStatus)
+                
+                if volatileStatus == 'taunt':
                     self.tauntTurns = 3
-                if status['volatileStatus'] == 'disable':
+                if volatileStatus == 'disable':
                     self.disableTurns = 3
                     self.disabledMove = self.lastUsedMove
-                if status['volatileStatus'] == 'encore':
+                if volatileStatus == 'encore':
                     self.encoreTurns = 3
                     self.encoredMove = self.lastUsedMove
+                if volatileStatus == 'partiallytrapped':
+                    self.partialTrapTurns = 3
+                    self.trapped = True
     
     def clearVolatile(self, volatileStatus):
         if volatileStatus == 'all':
@@ -184,12 +194,19 @@ class Pokemon:
             if volatileStatus == 'encore':
                 self.encoreTurns = 0
                 self.encoredMove = -1
+            if volatileStatus == 'partiallytrapped':
+                self.partialTrapTurns = 0
+                self.trapped = False
     
     #chip is going to encompass all % max hp damage. return True if the mon is Koed
     def applyChip(self, chip):
         if self.ability != 'magicguard':
-            self.stats[0] -= math.floor(self.maxHP * (chip[0] / chip[1]))
-            return self.stats[0] <= 0
+            return self.applyDamage(math.floor(self.maxHP * (chip[0] / chip[1])))
+        return False
+        
+    def applyDamage(self, damage):
+        self.stats[0] -= damage
+        return self.stats[0] <= 0
 
     def grounded(self):
         return 'Flying' not in self.types and self.ability != 'levitate' and self.item != 'Air Balloon' and 'roost' not in self.volatileStatus
