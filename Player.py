@@ -169,6 +169,8 @@ class Player:
         damage = 0
         if opponent is not None:
             damage = dmg_calc.DamageCalc(mon, opponent, move, field, 0.92)
+        else:
+            return 1
         if damage == 0:
             move_data = movedex[move]
             accuracy = move_data['accuracy'] / 100

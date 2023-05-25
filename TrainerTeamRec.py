@@ -24,8 +24,8 @@ class TrainerTeamRec(nn.Module):
     def forward(self, state):
         x = self.f1(self.layer1(state))
         x = self.f2(self.layer2(x))
-        out = self.output(x)
-        return out
+        x = self.output(x)
+        return x
 
 class TeamRecAgent():
     def __init__(self, gamma, epsilon, lr, num_input_dims, batch_size, num_actions, max_mem=100000, eps_min=0.01, eps_dec=5e-4):
@@ -85,3 +85,4 @@ class TeamRecAgent():
         loss.backward()
         self.TeamRec.optimizer.step()
         self.epsilon = max(self.epsilon - self.eps_dec, self.eps_min)
+        return loss.item()
